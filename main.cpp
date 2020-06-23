@@ -4,6 +4,8 @@ TObject* objects[15];
 //viewing variables
 float th = 0;
 float ph = 0;
+int gWidth;
+int gHeight;
 float look[3] = {0,0,-1}; //look vector
 
 //lighting variables
@@ -27,8 +29,9 @@ float ylight  =   0;  // Elevation of light
 float lastTime;
 static int targetFPS = 144;
 
-//key variables
+//key and mouse variables
 bool key_buffer[4]; //up, left, down, right
+int mouse_pos[2];
 bool rotate_light = true;
 
 //game logic variables
@@ -50,6 +53,7 @@ static float delta_()
   }
 }
 
+//Process key buffer
 void process_keys(float delta)
 {
   if(key_buffer[0]) {
@@ -71,6 +75,28 @@ void process_keys(float delta)
   if(th < 0) th = 360;
 }
 
+//Process mouse movement
+void process_mouse(float delta)
+{
+  int dx = mouse_pos[0] - (gWidth/2);
+  int dy = mouse_pos[1] - (gHeight/2);
+  th += dx * delta;
+  ph += dy * delta;
+  glutWarpPointer(gWidth/2, gHeight/2);
+  //std::cout << mouse_pos[0] << ":" << mouse_pos[1] << std::endl;
+}
+
+void track_mouse(int x, int y)
+{
+  int dx = x - mouse_pos[0];
+  int dy = y - mouse_pos[1];
+  th += (float)dx*.17;
+  ph += (float)dy*.17;
+  mouse_pos[0] = x;
+  mouse_pos[1] = y;
+}
+
+//Run lighting calculations
 void runLighting()
 {
   //  Translate intensity to color vectors
@@ -103,6 +129,7 @@ void idle()
   float delta = delta_();
   if(delta) {
     process_keys(delta);
+    //process_mouse(delta);
     if(rotate_light){
       zh += 90.0*delta;
       zh %= 360;
@@ -111,6 +138,7 @@ void idle()
    glutPostRedisplay();
 }
 
+//transform the camera
 void transform_camera()
 {
   look[0] = Sin(th)*Cos(ph);
@@ -143,10 +171,11 @@ void display()
   glutSwapBuffers();
 }
 
+//glut reshape func
 void reshape(int width,int height)
 {
-  //gWidth = width;
-  //gHeight = height;
+  gWidth = width;
+  gHeight = height;
   //set viewport
   glViewport(0, 0, (GLsizei) width, (GLsizei) height);
   //projection mode
@@ -203,6 +232,14 @@ void specialUp(int key, int x, int y)
   }
 }
 
+void mouse(int button, int state, int x, int y)
+{
+  if(button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+  {
+    fire();
+  }
+}
+
 void keyboard(unsigned char key, int x, int y)
 {
   switch(key) {
@@ -221,7 +258,9 @@ void keyboard(unsigned char key, int x, int y)
 
 void program_init()
 {
+  //initialize random
   srand(time(NULL));
+  //initialize scene objects
   objects[0] = new TargetRack(0,0,0, 1,1,1, 0,0,-10); objects[0]->init();
   light_four();
   objects[1] = new SurfaceRect(0,0,0, 10,1,25, 0,-3,-4, 1,1,1, (char*)"hay.bmp"); objects[1]->init();
@@ -306,6 +345,8 @@ int main(int argc, char* argv[])
   glutSpecialFunc(special); //arrow keys, esc
   glutSpecialUpFunc(specialUp);
   glutKeyboardFunc(keyboard); //keyboard controls
+  glutMouseFunc(mouse);
+  glutPassiveMotionFunc(track_mouse);
   //face culling/depth test
   glEnable(GL_DEPTH_TEST);
   glCullFace(GL_BACK);
