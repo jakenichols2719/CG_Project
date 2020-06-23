@@ -1,0 +1,24 @@
+Homework 3 by James Nichols
+
+In light of changes to my project idea, I've also changed what scene I'm
+displaying. This time it's meant to look like a carnival target game. Controls:
+
+Arrow keys: look up, left, down, and right
+s: toggle light movement
+esc: exit program
+
+Images converted with GIMP
+Texture Sources:
+crate.bmp: example
+darkwood.bmp: https://www.the3rdsequence.com/texturedb/texture/13/dark+parquet/
+medwood.bmp: https://www.the3rdsequence.com/texturedb/texture/45/dark+wood+parquet/
+hay.bmp: https://www.the3rdsequence.com/texturedb/texture/14/+hay+straw/
+target.bmp: homemade
+
+Time spent: 35 hrs
+
+A few notes:
+I tried to make it work on more of an inheritance basis than last time. This
+presented some issues I didn't see coming at first so I'm going to go with
+a different approach for the final product, in addition to switching over
+to SDL.
