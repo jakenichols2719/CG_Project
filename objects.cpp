@@ -426,3 +426,40 @@ int TargetRack::lit_target_count()
   }
   return num;
 }
+
+//===HAYBALE===
+void HayBale::init()
+{
+  texture = LoadTexBMP("hay.bmp");
+}
+void HayBale::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  //draw target faces
+  top.draw();
+  bottom.draw();
+  glPopMatrix();
+  //need to reset so that texture gets applied
+  glPushMatrix();
+  apply_transform();
+  //draw wooden frame
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_QUADS);
+    for(int th = 0; th < 360; th+=20) {
+      glNormal3f(-Sin(th),0,Cos(th));
+      glTexCoord2f(0,1); glVertex3f(-Sin(th+10),-.5,Cos(th+10));
+      glTexCoord2f(0,0); glVertex3f(-Sin(th-10),-.5,Cos(th-10));
+      glTexCoord2f(1,0); glVertex3f(-Sin(th-10),+.5,Cos(th-10));
+      glTexCoord2f(1,1); glVertex3f(-Sin(th+10),+.5,Cos(th+10));
+    }
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}

@@ -32,6 +32,7 @@ static int targetFPS = 144;
 //key and mouse variables
 bool key_buffer[4]; //up, left, down, right
 int mouse_pos[2];
+bool mouse_visible = true;
 bool rotate_light = true;
 
 //game logic variables
@@ -53,7 +54,7 @@ static float delta_()
   }
 }
 
-//Process key buffer
+//Process key buffer; currently not in use
 void process_keys(float delta)
 {
   if(key_buffer[0]) {
@@ -105,6 +106,7 @@ void runLighting()
   float Specular[]  = {(float)0.01*specular,(float)0.01*specular,(float)0.01*specular,1.0};
   //  Light position
   //float Position[]  = {distance*Cos(zh),ylight,distance*Sin(zh),1.0};
+
   //float Position[] = {2,0,2};
   float Position[] = {2*Sin(zh),1,4*Cos(zh)};
   //illustrate light
@@ -133,6 +135,12 @@ void idle()
     if(rotate_light){
       zh += 90.0*delta;
       zh %= 360;
+    }
+    if(mouse_visible){
+      glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+    }
+    else {
+      glutSetCursor(GLUT_CURSOR_NONE);
     }
   }
    glutPostRedisplay();
@@ -164,7 +172,7 @@ void display()
   //glRotated(ph,1,0,0);
   //glRotated(th,0,1,0);
   runLighting();
-  for(int n=0; n<12; n++) {
+  for(int n=0; n<14; n++) {
     objects[n]->draw();
   }
   glPopMatrix();
@@ -246,6 +254,13 @@ void keyboard(unsigned char key, int x, int y)
     case 's':
       rotate_light = !rotate_light;
       break;
+    case '0':
+      th = 0;
+      ph = 0;
+      break;
+    case '1':
+      mouse_visible = !mouse_visible;
+      break;
     case 27:
       exit(0);
     case 32: //spacebar
@@ -261,8 +276,10 @@ void program_init()
   //initialize random
   srand(time(NULL));
   //initialize scene objects
+  //targetrack
   objects[0] = new TargetRack(0,0,0, 1,1,1, 0,0,-10); objects[0]->init();
   light_four();
+  //walls
   objects[1] = new SurfaceRect(0,0,0, 10,1,25, 0,-3,-4, 1,1,1, (char*)"hay.bmp"); objects[1]->init();
   objects[1]->set_texture_scale(5);
   objects[2] = new SurfaceRect(0,0,-90, 10,1,25, -5,2,-4, 1,1,1, (char*)"darkwood.bmp"); objects[2]->init();
@@ -273,12 +290,15 @@ void program_init()
   objects[4]->set_texture_scale(5);
   objects[5] = new SurfaceRect(90,0,0, 10,1,10, 0,1,-16, 1,1,1, (char*)"darkwood.bmp"); objects[5]->init();
   objects[5]->set_texture_scale(5);
-  objects[6] = new Cuboid(0,20,0, 2,2,2, -3.5,-2,-14, 1,1,1, (char*)"crate.bmp"); objects[6]->init();
-  objects[7] = new Cuboid(0,30,0, 1,1,1, -3.5,-.5,-14, 1,1,1, (char*)"crate.bmp"); objects[7]->init();
-  objects[8] = new Cuboid(0,30,0, 2,2,2,  3.5,-2,0, 1,1,1, (char*)"crate.bmp"); objects[8]->init();
-  objects[9] = new Cuboid(0,-10,0, 1.6,1.6,1.6,  1.0,-2.2,.2, 1,1,1, (char*)"crate.bmp"); objects[9]->init();
-  objects[10] = new Cuboid(0,45,0, 1.4,1.4,1.4,  -.7,-2.2,-.1, 1,1,1, (char*)"crate.bmp"); objects[10]->init();
-  objects[11] = new Cuboid(0,10,0, 1.9,1.9,1.9,  -3,-2,-.1, 1,1,1, (char*)"crate.bmp"); objects[11]->init();
+  objects[6] = new SurfaceRect(90,180,0, 10,1,10, 0,1,8.5, 1,1,1, (char*)"darkwood.bmp"); objects[6]->init();
+  objects[6]->set_texture_scale(5);
+  objects[7] = new Cuboid(0,20,0, 2,2,2, -3.5,-2,-14, 1,1,1, (char*)"crate.bmp"); objects[7]->init();
+  objects[8] = new Cuboid(0,30,0, 1,1,1, -3.5,-.5,-14, 1,1,1, (char*)"crate.bmp"); objects[8]->init();
+  objects[9] = new Cuboid(0,30,0, 2,2,2,  3.5,-2,0, 1,1,1, (char*)"crate.bmp"); objects[9]->init();
+  objects[10] = new Cuboid(0,-10,0, 1.6,1.6,1.6,  1.0,-2.2,.2, 1,1,1, (char*)"crate.bmp"); objects[10]->init();
+  objects[11] = new Cuboid(0,45,0, 1.4,1.4,1.4,  -.7,-2.2,-.1, 1,1,1, (char*)"crate.bmp"); objects[11]->init();
+  objects[12] = new Cuboid(0,10,0, 1.9,1.9,1.9,  -3,-2,-.1, 1,1,1, (char*)"crate.bmp"); objects[12]->init();
+  objects[13] = new HayBale(0,0,0, 2,2,2, 3.5,-2,-14, 1,1,1); objects[13]->init();
 }
 
 //game logic: shoot
@@ -345,8 +365,8 @@ int main(int argc, char* argv[])
   glutSpecialFunc(special); //arrow keys, esc
   glutSpecialUpFunc(specialUp);
   glutKeyboardFunc(keyboard); //keyboard controls
-  glutMouseFunc(mouse);
-  glutPassiveMotionFunc(track_mouse);
+  //glutMouseFunc(mouse); //mouse controls; disabled
+  //glutPassiveMotionFunc(track_mouse); //mouse controls; disabled
   //face culling/depth test
   glEnable(GL_DEPTH_TEST);
   glCullFace(GL_BACK);

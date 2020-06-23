@@ -167,6 +167,10 @@ public:
   void toggle_light_off();
 };
 
+/*
+ * Target Rack
+ * 4x4 targets
+*/
 class TargetRack : public TObject
 {
   using TObject::TObject;
@@ -182,4 +186,18 @@ public:
   void toggle_light_at(int x, int y);
   void toggle_light_off_at(int x, int y);
   int lit_target_count();
+};
+
+class HayBale : public TObject
+{
+  using TObject::TObject;
+private:
+  Circle top = Circle(0,0,0, 1,1,1, 0,.5,0, 1,1,1, (char*)"hay.bmp");
+  Circle bottom = Circle(180,0,0, 1,1,1, 0,-.5,0, 1,1,1, (char*)"hay.bmp");
+  float shine_value = 1;
+  float spec_color[4] = {1,1,1,1};
+  float em_color[4]   = {0,0,0,1};
+public:
+  void init();
+  void draw();
 };
