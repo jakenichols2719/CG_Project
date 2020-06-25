@@ -32,6 +32,8 @@ protected:
   float col[3] = {1,1,1};
   //texture
   float tex_sca = 1.0;
+  float tex_sca_x = 1.0;
+  float tex_sca_y = 1.0;
   bool hasTexture = false;
   GLuint texture;
 public:
@@ -54,13 +56,13 @@ public:
   float* rotation_() { return rot; };
   float* position_() { return pos; };
   float* color_() { return col; };
-  float texture_scale_() { return tex_sca; };
+  //float texture_scale_() { return tex_sca; };
   void set_scale(float _sca[3]) { sca[0] = _sca[0]; sca[1] = _sca[1]; sca[2] = _sca[2]; };
   void set_rotation(float _rot[3]) { rot[0] = _rot[0]; rot[1] = _rot[1]; rot[2] = _rot[2]; };
   void set_position(float _pos[3]) { pos[0] = _pos[0]; pos[1] = _pos[1]; pos[2] = _pos[2]; };
   void set_color(float _col[3]) { col[0] = _col[0]; col[1] = _col[1]; col[2] = _col[2]; }
   void set_texture(char* file) { texture = LoadTexBMP(file); };
-  void set_texture_scale(float _tex_sca) { tex_sca = _tex_sca; };
+  void set_texture_scale(float x, float y) { tex_sca_x = x; tex_sca_y = y; };
   //apply transformations
   int apply_transform();
   //virtual functions for inheritance. will print out a message if not implemented.

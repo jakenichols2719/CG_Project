@@ -279,22 +279,29 @@ void program_init()
   //targetrack
   objects[0] = new TargetRack(0,0,0, 1,1,1, 0,0,-10); objects[0]->init();
   light_four();
-  //walls
-  objects[1] = new SurfaceRect(0,0,0, 10,1,25, 0,-3,-4, 1,1,1, (char*)"hay.bmp"); objects[1]->init();
-  objects[1]->set_texture_scale(5);
-  objects[2] = new SurfaceRect(0,0,-90, 10,1,25, -5,2,-4, 1,1,1, (char*)"darkwood.bmp"); objects[2]->init();
-  objects[2]->set_texture_scale(5);
-  objects[3] = new SurfaceRect(0,0,90, 10,1,25, 5,2,-4, 1,1,1, (char*)"darkwood.bmp"); objects[3]->init();
-  objects[3]->set_texture_scale(5);
-  objects[4] = new SurfaceRect(0,0,180, 10,1,25, 0,6,-4, 1,1,1, (char*)"darkwood.bmp"); objects[4]->init();
-  objects[4]->set_texture_scale(5);
-  objects[5] = new SurfaceRect(90,0,0, 10,1,10, 0,1,-16, 1,1,1, (char*)"darkwood.bmp"); objects[5]->init();
-  objects[5]->set_texture_scale(5);
-  objects[6] = new SurfaceRect(90,180,0, 10,1,10, 0,1,8.5, 1,1,1, (char*)"darkwood.bmp"); objects[6]->init();
-  objects[6]->set_texture_scale(5);
+  //walls; target.bmp is a temp for a carnival tent texture. Work on it.
+  //floor
+  objects[1] = new SurfaceRect(0,0,0, 20,1,25, 5,-3,-4, 1,1,1, (char*)"hay.bmp"); objects[1]->init();
+  objects[1]->set_texture_scale(10,12.5);
+  //left
+  objects[2] = new SurfaceRect(0,-90,-90, 25,1,10, -5,2,-4, 1,1,1, (char*)"cloth.bmp"); objects[2]->init();
+  objects[2]->set_texture_scale(2.5,1);
+  //right
+  objects[3] = new SurfaceRect(0,-90,90, 25,1,10, 15,2,-4, 1,1,1, (char*)"cloth.bmp"); objects[3]->init();
+  objects[3]->set_texture_scale(2.5,1);
+  //ceiling
+  objects[4] = new SurfaceRect(0,0,180, 20,1,25, 5,7,-4, 1,1,1, (char*)"darkwood.bmp"); objects[4]->init();
+  objects[4]->set_texture_scale(10,12.5);
+  //front wall (from start view)
+  objects[5] = new SurfaceRect(90,0,0, 20,1,10, 5,2,-16, 1,1,1, (char*)"cloth.bmp"); objects[5]->init();
+  objects[5]->set_texture_scale(2,1);
+  //back wall (from start view)
+  objects[6] = new SurfaceRect(90,180,0, 20,1,10, 5,2,8.5, 1,1,1, (char*)"cloth.bmp"); objects[6]->init();
+  objects[6]->set_texture_scale(2,1);
+  //decorative objects
   objects[7] = new Cuboid(0,20,0, 2,2,2, -3.5,-2,-14, 1,1,1, (char*)"crate.bmp"); objects[7]->init();
   objects[8] = new Cuboid(0,30,0, 1,1,1, -3.5,-.5,-14, 1,1,1, (char*)"crate.bmp"); objects[8]->init();
-  objects[9] = new Cuboid(0,30,0, 2,2,2,  3.5,-2,0, 1,1,1, (char*)"crate.bmp"); objects[9]->init();
+  objects[9] = new Cuboid(0,30,0, 2,2,2,  3,-2,2, 1,1,1, (char*)"crate.bmp"); objects[9]->init();
   objects[10] = new Cuboid(0,-10,0, 1.6,1.6,1.6,  1.0,-2.2,.2, 1,1,1, (char*)"crate.bmp"); objects[10]->init();
   objects[11] = new Cuboid(0,45,0, 1.4,1.4,1.4,  -.7,-2.2,-.1, 1,1,1, (char*)"crate.bmp"); objects[11]->init();
   objects[12] = new Cuboid(0,10,0, 1.9,1.9,1.9,  -3,-2,-.1, 1,1,1, (char*)"crate.bmp"); objects[12]->init();

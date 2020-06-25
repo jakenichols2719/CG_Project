@@ -110,39 +110,39 @@ void Cuboid::draw()
       glColor3f(col[0],col[1],col[2]);
       glNormal3f( 0, 0, .5);
       glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5, .5);
-      glTexCoord2f(tex_sca, 0.0); glVertex3f(+.5,-.5, .5);
-      glTexCoord2f(tex_sca, tex_sca); glVertex3f(+.5,+.5, .5);
-      glTexCoord2f(0.0,     tex_sca); glVertex3f(-.5,+.5, .5);
+      glTexCoord2f(tex_sca_x, 0.0); glVertex3f(+.5,-.5, .5);
+      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5, .5);
+      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5, .5);
       //  Back
       glNormal3f( 0, 0,-.5);
       glTexCoord2f(0.0,     0.0); glVertex3f(+.5,-.5,-.5);
-      glTexCoord2f(tex_sca, 0.0); glVertex3f(-.5,-.5,-.5);
-      glTexCoord2f(tex_sca, tex_sca); glVertex3f(-.5,+.5,-.5);
-      glTexCoord2f(0.0,     tex_sca); glVertex3f(+.5,+.5,-.5);
+      glTexCoord2f(tex_sca_x, 0.0); glVertex3f(-.5,-.5,-.5);
+      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(-.5,+.5,-.5);
+      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(+.5,+.5,-.5);
       //  Right
       glNormal3f(+.5, 0, 0);
       glTexCoord2f(0.0,     0.0); glVertex3f(+.5,-.5,+.5);
-      glTexCoord2f(tex_sca,     0.0); glVertex3f(+.5,-.5,-.5);
-      glTexCoord2f(tex_sca, tex_sca); glVertex3f(+.5,+.5,-.5);
-      glTexCoord2f(0.0,     tex_sca); glVertex3f(+.5,+.5,+.5);
+      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,-.5,-.5);
+      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5,-.5);
+      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(+.5,+.5,+.5);
       //  Left
       glNormal3f(-.5, 0, 0);
       glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5,-.5);
-      glTexCoord2f(tex_sca,     0.0); glVertex3f(-.5,-.5,+.5);
-      glTexCoord2f(tex_sca, tex_sca); glVertex3f(-.5,+.5,+.5);
-      glTexCoord2f(0.0,     tex_sca); glVertex3f(-.5,+.5,-.5);
+      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(-.5,-.5,+.5);
+      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(-.5,+.5,+.5);
+      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5,-.5);
       //  Top
       glNormal3f( 0,+.5, 0);
       glTexCoord2f(0.0,     0.0); glVertex3f(-.5,+.5,+.5);
-      glTexCoord2f(tex_sca,     0.0); glVertex3f(+.5,+.5,+.5);
-      glTexCoord2f(tex_sca, tex_sca); glVertex3f(+.5,+.5,-.5);
-      glTexCoord2f(0.0,     tex_sca); glVertex3f(-.5,+.5,-.5);
+      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,+.5,+.5);
+      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5,-.5);
+      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5,-.5);
       //  Bottom
       glNormal3f( 0,-.5, 0);
       glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5,-.5);
-      glTexCoord2f(tex_sca,     0.0); glVertex3f(+.5,-.5,-.5);
-      glTexCoord2f(tex_sca, tex_sca); glVertex3f(+.5,-.5,+.5);
-      glTexCoord2f(0.0,     tex_sca); glVertex3f(-.5,-.5,+.5);
+      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,-.5,-.5);
+      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,-.5,+.5);
+      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,-.5,+.5);
     glEnd();
     glDisable(GL_TEXTURE_2D);
   }
@@ -217,9 +217,9 @@ void SurfaceRect::draw()
     glBegin(GL_QUADS);
       glNormal3f(0,1,0);
       glTexCoord2f(0.0,    0.0); glVertex3f(-.5,0,.5);
-      glTexCoord2f(tex_sca,0.0); glVertex3f(.5,0,.5);
-      glTexCoord2f(tex_sca,tex_sca); glVertex3f(.5,0,-.5);
-      glTexCoord2f(0.0,    tex_sca); glVertex3f(-.5,0,-.5);
+      glTexCoord2f(tex_sca_x,0.0); glVertex3f(.5,0,.5);
+      glTexCoord2f(tex_sca_x,tex_sca_y); glVertex3f(.5,0,-.5);
+      glTexCoord2f(0.0,    tex_sca_y); glVertex3f(-.5,0,-.5);
     glEnd();
     glDisable(GL_TEXTURE_2D);
   }
