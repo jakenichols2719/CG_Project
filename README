@@ -1,26 +1,9 @@
-Homework 3 by James Nichols
+CSCI 4229 Project by James Nichols
 
-In light of changes to my project idea, I've also changed what scene I'm
-displaying. This time it's meant to look like a carnival target game. Controls:
+This project was completed as the final for CSCI 4229 in the summer semester
+of 2020. It simulates a carnival shooting minigame and a bit of the surrounding
+environment.
 
-Arrow keys: look up, left, down, and right
-s: toggle light movement
-esc: exit program
-
-Images converted with GIMP
-Texture Sources:
-crate.bmp: example
-darkwood.bmp: https://www.the3rdsequence.com/texturedb/texture/13/dark+parquet/
-medwood.bmp: https://www.the3rdsequence.com/texturedb/texture/45/dark+wood+parquet/
-hay.bmp: https://www.the3rdsequence.com/texturedb/texture/14/+hay+straw/
-cloth.bmp:
-metal.bmp:
-target.bmp: homemade
-
-Time spent: 35 hrs
-
-A few notes:
-I tried to make it work on more of an inheritance basis than last time. This
-presented some issues I didn't see coming at first so I'm going to go with
-a different approach for the final product, in addition to switching over
-to SDL.
+Controls:
+Arrow keys: Rotate camera
+Space bar: Fire (at center of screen)

@@ -1,4 +1,5 @@
 #include "objects.h"
+#include "shaderfunc.h"
 
 TObject* objects[20];
 //viewing variables
@@ -16,14 +17,17 @@ int inc       =  10;  // Ball increment
 int smooth    =   1;  // Smooth/Flat shading
 int local     =   0;  // Local Viewer Model
 int emission  =   0;  // Emission intensity (%)
-float ambient   =  50;  // Ambient intensity (%)
-float diffuse   =  80;  // Diffuse intensity (%)
+float ambient   =  60;  // Ambient intensity (%)
+float diffuse   =  50;  // Diffuse intensity (%)
 float specular  =  20;  // Specular intensity (%)
 float atn[3] = {1,.10,0};
 int shininess =   0;  // Shininess (power of two)
 float shiny   =   1;  // Shininess (value)
 int zh        =  90;  // Light angle
 float ylight  =   0;  // Elevation of light
+
+//shader
+int shader = 0;
 
 //timing variables
 float lastTime;
@@ -191,12 +195,12 @@ void display()
   //glRotated(ph,1,0,0);
   //glRotated(th,0,1,0);
   runLighting();
-
+  glUseProgram(shader);
   for(int n=0; n<15; n++) {
     objects[n]->draw();
   }
   objects[15]->draw();
-  //objects[15]->draw();
+  glUseProgram(0);
   glPopMatrix();
   glutSwapBuffers();
 }
@@ -284,6 +288,7 @@ void keyboard(unsigned char key, int x, int y)
       mouse_visible = !mouse_visible;
       break;
     case 27:
+      glUseProgram(0);
       exit(0);
     case 32: //spacebar
       fire();
@@ -297,6 +302,8 @@ void program_init()
 {
   //initialize random
   srand(time(NULL));
+  //get shader
+  shader = MakeShaderProg((char*)"carnival.vert",(char*)"carnival.frag");
   //initialize scene objects
   //targetrack
   objects[0] = new TargetRack(0,0,0, 1,1,1, 0,0,-10); objects[0]->init();

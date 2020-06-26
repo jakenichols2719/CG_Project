@@ -213,30 +213,12 @@ void SurfaceRect::draw()
     glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
     glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
-    //draw
-    /*
     glBegin(GL_QUADS);
       glNormal3f(0,1,0);
       glTexCoord2f(0.0,    0.0); glVertex3f(-.5,0,.5);
       glTexCoord2f(tex_sca_x,0.0); glVertex3f(.5,0,.5);
       glTexCoord2f(tex_sca_x,tex_sca_y); glVertex3f(.5,0,-.5);
       glTexCoord2f(0.0,    tex_sca_y); glVertex3f(-.5,0,-.5);
-    glEnd();
-    */
-    glBegin(GL_QUADS);
-    glNormal3f(0,1,0);
-    for(float x=-.5; x<.5; x+=.1){
-      float tsx = (x+.5)*tex_sca_x; //start x tex value
-      float tfx = (x+.6)*tex_sca_x; //max tex-x value at this coord
-      for(float y=.5; y>-.5; y-=.1){
-        float tsy = (-y+.5)*tex_sca_y; //start y tex value
-        float tfy = (-y+.6)*tex_sca_y; //max tex-y value at this coord
-        glTexCoord2f(tsx,tsy); glVertex3f(x,0,y);
-        glTexCoord2f(tfx,tsy); glVertex3f(x+.1,0,y);
-        glTexCoord2f(tfx,tfy); glVertex3f(x+.1,0,y-.1);
-        glTexCoord2f(tsx,tfy); glVertex3f(x,0,y-.1);
-      }
-    }
     glEnd();
     glDisable(GL_TEXTURE_2D);
   }

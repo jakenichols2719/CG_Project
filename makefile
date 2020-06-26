@@ -34,13 +34,14 @@ CSCIx229.a:fatal.o loadtexbmp.o print.o project.o errcheck.o
 
 main.o: main.cpp objects.o
 objects.o: CSCIx229.a objects.h objects.cpp
+shaderfunc.o: CSCIx229.a shaderfunc.h shaderfunc.cpp
 
 .c.o:
 	gcc -c $(CFLG) $<
 .cpp.o:
 	g++ -c $(CFLG) $<
 
-final: main.o objects.o CSCIx229.a
+final: main.o objects.o shaderfunc.o CSCIx229.a
 	g++ -o $@ $^ $(LIBS)
 
 clean:
