@@ -127,6 +127,18 @@ public:
   void draw();
 };
 
+class Cone : public TObject
+{
+  using TObject::TObject;
+private:
+  float shine_value = 1;
+  float spec_color[4] = {1,1,1,1};
+  float em_color[4]   = {0,0,0,1};
+  Circle base = Circle(180,0,0, 1,1,1, 0,-.5,0, 1,1,1);
+public:
+  void init();
+  void draw();
+};
 
 //===FABRICATED OBJECTS===
 /*
@@ -189,7 +201,9 @@ public:
   void toggle_light_off_at(int x, int y);
   int lit_target_count();
 };
-
+/*
+ * Hay bale object
+*/
 class HayBale : public TObject
 {
   using TObject::TObject;
@@ -199,6 +213,33 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+public:
+  void init();
+  void draw();
+};
+
+/*
+ * Table objects
+ * 2x1x1
+*/
+class Table : public TObject
+{
+  using TObject::TObject;
+private:
+  Cuboid legs[4];
+  Cuboid top;
+public:
+  void init();
+  void draw();
+};
+
+class Lamp : public TObject
+{
+  using TObject::TObject;
+private:
+  Cuboid pole = Cuboid(0,0,0, .1,5.5,.1, 0,.25,0, 1,1,1, (char*)"metal.bmp");
+  Cone lamp = Cone(0,0,0, .5,.5,.5, 0,-2.5,0, 1,1,1, (char*)"metal.bmp");
+  //Sphere bulb;
 public:
   void init();
   void draw();

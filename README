@@ -13,6 +13,8 @@ crate.bmp: example
 darkwood.bmp: https://www.the3rdsequence.com/texturedb/texture/13/dark+parquet/
 medwood.bmp: https://www.the3rdsequence.com/texturedb/texture/45/dark+wood+parquet/
 hay.bmp: https://www.the3rdsequence.com/texturedb/texture/14/+hay+straw/
+cloth.bmp:
+metal.bmp:
 target.bmp: homemade
 
 Time spent: 35 hrs

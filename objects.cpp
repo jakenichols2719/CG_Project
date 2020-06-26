@@ -214,12 +214,29 @@ void SurfaceRect::draw()
     glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
     //draw
+    /*
     glBegin(GL_QUADS);
       glNormal3f(0,1,0);
       glTexCoord2f(0.0,    0.0); glVertex3f(-.5,0,.5);
       glTexCoord2f(tex_sca_x,0.0); glVertex3f(.5,0,.5);
       glTexCoord2f(tex_sca_x,tex_sca_y); glVertex3f(.5,0,-.5);
       glTexCoord2f(0.0,    tex_sca_y); glVertex3f(-.5,0,-.5);
+    glEnd();
+    */
+    glBegin(GL_QUADS);
+    glNormal3f(0,1,0);
+    for(float x=-.5; x<.5; x+=.1){
+      float tsx = (x+.5)*tex_sca_x; //start x tex value
+      float tfx = (x+.6)*tex_sca_x; //max tex-x value at this coord
+      for(float y=.5; y>-.5; y-=.1){
+        float tsy = (-y+.5)*tex_sca_y; //start y tex value
+        float tfy = (-y+.6)*tex_sca_y; //max tex-y value at this coord
+        glTexCoord2f(tsx,tsy); glVertex3f(x,0,y);
+        glTexCoord2f(tfx,tsy); glVertex3f(x+.1,0,y);
+        glTexCoord2f(tfx,tfy); glVertex3f(x+.1,0,y-.1);
+        glTexCoord2f(tsx,tfy); glVertex3f(x,0,y-.1);
+      }
+    }
     glEnd();
     glDisable(GL_TEXTURE_2D);
   }
@@ -265,11 +282,13 @@ void Circle::draw()
     //draw
     glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
-    for(int th = 0; th < 360; th+=20) {
+    for(int th = 0; th < 360; th+=10) {
+      float t0 = th/180;
+      float t1 = (th+10)/180;
       glNormal3f(0,1,0);
       glTexCoord2f(0,1); glVertex3f(0,0,0);
-      glTexCoord2f(0,0); glVertex3f(-Sin(th+10),0,Cos(th+10));
-      glTexCoord2f(1,0); glVertex3f(-Sin(th-10),0,Cos(th-10));
+      glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),0,Cos(th+5));
+      glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),0,Cos(th-5));
       glTexCoord2f(1,1); glVertex3f(0,0,0);
     }
     glEnd();
@@ -292,6 +311,61 @@ void Circle::draw()
     }
     glEnd();
   }
+  glPopMatrix();
+}
+
+//===CONE===
+void Cone::init()
+{
+
+}
+void Cone::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  if(hasTexture) {
+    //enable lighting materials
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_NEAREST);
+    glColor3f(col[0], col[1], col[2]);
+    //draw
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    for(int th = 0; th < 360; th+=10) {
+      float t0 = th/180;
+      float t1 = (th+10)/180;
+      glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(0,1); glVertex3f(0,.5,0);
+      glNormal3f(-Sin(th+5),1,Cos(th+5)); glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
+      glNormal3f(-Sin(th-5),1,Cos(th-5)); glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
+      glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(1,1); glVertex3f(0,.5,0);
+    }
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+  }
+  else {
+    //enable lighting materials
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+    glColor3f(col[0], col[1], col[2]);
+    //draw
+    glBegin(GL_QUADS);
+    for(int th = 0; th < 360; th+=10) {
+      glNormal3f(-Sin(th),1,Cos(th)); glVertex3f(0,.5,0);
+      glNormal3f(-Sin(th+5),1,Cos(th+5)); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
+      glNormal3f(-Sin(th-5),1,Cos(th-5)); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
+      glNormal3f(-Sin(th),1,Cos(th)); glVertex3f(0,.5,0);
+    }
+    glEnd();
+  }
+  base.draw();
   glPopMatrix();
 }
 
@@ -322,12 +396,12 @@ void TargetFace::draw()
                   GL_NEAREST);
   glEnable(GL_TEXTURE_2D);
   glBegin(GL_QUADS);
-    for(int th = 0; th < 360; th+=20) {
+    for(int th = 0; th < 360; th+=10) {
       glNormal3f(-Sin(th),0,Cos(th));
-      glTexCoord2f(0,1); glVertex3f(-Sin(th+10),-.2,Cos(th+10));
-      glTexCoord2f(0,0); glVertex3f(-Sin(th-10),-.2,Cos(th-10));
-      glTexCoord2f(1,0); glVertex3f(-Sin(th-10),+.2,Cos(th-10));
-      glTexCoord2f(1,1); glVertex3f(-Sin(th+10),+.2,Cos(th+10));
+      glTexCoord2f(0,1); glVertex3f(-Sin(th+5),-.2,Cos(th+5));
+      glTexCoord2f(0,0); glVertex3f(-Sin(th-5),-.2,Cos(th-5));
+      glTexCoord2f(1,0); glVertex3f(-Sin(th-5),+.2,Cos(th-5));
+      glTexCoord2f(1,1); glVertex3f(-Sin(th+5),+.2,Cos(th+5));
     }
   glEnd();
   glDisable(GL_TEXTURE_2D);
@@ -452,14 +526,52 @@ void HayBale::draw()
                   GL_NEAREST);
   glEnable(GL_TEXTURE_2D);
   glBegin(GL_QUADS);
-    for(int th = 0; th < 360; th+=20) {
-      glNormal3f(-Sin(th),0,Cos(th));
-      glTexCoord2f(0,1); glVertex3f(-Sin(th+10),-.5,Cos(th+10));
-      glTexCoord2f(0,0); glVertex3f(-Sin(th-10),-.5,Cos(th-10));
-      glTexCoord2f(1,0); glVertex3f(-Sin(th-10),+.5,Cos(th-10));
-      glTexCoord2f(1,1); glVertex3f(-Sin(th+10),+.5,Cos(th+10));
+    for(int th = 0; th < 360; th+=10) {
+      glNormal3f(-Sin(th+5),0,Cos(th+5));
+      glTexCoord2f(0,1); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
+      glNormal3f(-Sin(th-5),0,Cos(th-5));
+      glTexCoord2f(0,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
+      glTexCoord2f(1,0); glVertex3f(-Sin(th-5),+.5,Cos(th-5));
+      glNormal3f(-Sin(th+5),0,Cos(th+5));
+      glTexCoord2f(1,1); glVertex3f(-Sin(th+5),+.5,Cos(th+5));
     }
   glEnd();
   glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}
+
+//===TABLE===
+void Table::init()
+{
+  legs[0] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp");
+  legs[1] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp");
+  legs[2] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp");
+  legs[3] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp");
+  top =     Cuboid(0,0,0, 2,.2,1,   0.0,.4,0.0,  1,1,1, (char*)"medwood.bmp");
+}
+void Table::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  for(int n=0; n<4; n++) {
+    legs[n].draw();
+  }
+  top.draw();
+  glPopMatrix();
+}
+
+
+//===LAMP===
+void Lamp::init()
+{
+
+}
+void Lamp::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  pole.draw();
+  lamp.draw();
+  //bulb.draw();
   glPopMatrix();
 }
