@@ -13,8 +13,7 @@ void main()
    //  Normal
    Normal = gl_NormalMatrix * gl_Normal;
    //  Eye position
-   //View  = -P.xyz;
-   View = vec3(0,0,4);
+   View  = -P.xyz;
    //  Texture
    gl_TexCoord[0] = gl_MultiTexCoord0;
    //  Set vertex position

@@ -10,21 +10,11 @@ int gHeight;
 float look[3] = {0,0,-1}; //look vector
 
 //lighting variables
-int light     =   1;  // Lighting
-int one       =   1;  // Unit value
-int distance  =   15;  // Light distance
-int inc       =  10;  // Ball increment
-int smooth    =   1;  // Smooth/Flat shading
-int local     =   0;  // Local Viewer Model
-int emission  =   0;  // Emission intensity (%)
-float ambient   =  60;  // Ambient intensity (%)
-float diffuse   =  50;  // Diffuse intensity (%)
-float specular  =  20;  // Specular intensity (%)
+float ambient   =  30;  // Ambient intensity (%)
+float diffuse   =  40;  // Diffuse intensity (%)
+float specular  =  60;  // Specular intensity (%)
 float atn[3] = {1,.10,0};
-int shininess =   0;  // Shininess (power of two)
-float shiny   =   1;  // Shininess (value)
-int zh        =  90;  // Light angle
-float ylight  =   0;  // Elevation of light
+int zh        =  90;  // Used to rotate lamp/center light
 
 //shader
 int shader = 0;
@@ -109,40 +99,16 @@ void runLighting()
   float Diffuse[]   = {(float)0.01*diffuse ,(float)0.01*diffuse ,(float)0.01*diffuse ,1.0};
   float Specular[]  = {(float)0.01*specular,(float)0.01*specular,(float)0.01*specular,1.0};
   //  Light position
-  //float Position[]  = {distance*Cos(zh),ylight,distance*Sin(zh),1.0};
-
-  //float Position[] = {2,0,2};
   float* lamp_pos = objects[15]->position_();
-  float Position[] = {lamp_pos[0],0,lamp_pos[2]};
-  //std::cout << Position[0] << ":" << Position[1] << ":" << Position[2] << std::endl;
-  //float Position_1[] = {100,100,100};
-  Position[0] = lamp_pos[0] -(1.5*Sin(objects[15]->rotation_()[1]));
-  Position[1] = lamp_pos[1] - 4.0;
-  Position[2] = lamp_pos[2] -(1.5*Cos(objects[15]->rotation_()[1]));
-  //illustrate light
-  glPointSize(10);
-  glColor3f(1,1,0);
-  glBegin(GL_POINTS);
-  glVertex3f(Position[0],Position[1],Position[2]);
-  glEnd();
+  float Position[] = {0,0,0};
+  Position[0] = lamp_pos[0] -(1.0*Sin(objects[15]->rotation_()[1]));
+  Position[1] = lamp_pos[1] - 4.1;
+  Position[2] = lamp_pos[2] -(1.0*Cos(objects[15]->rotation_()[1]));
   //  Set ambient, diffuse, specular components and position of light 0
   glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
   glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
   glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
   glLightfv(GL_LIGHT0,GL_POSITION,Position);
-  glLightf(GL_LIGHT0,GL_CONSTANT_ATTENUATION, atn[0]);
-  glLightf(GL_LIGHT0,GL_LINEAR_ATTENUATION, atn[1]);
-  glLightf(GL_LIGHT0,GL_QUADRATIC_ATTENUATION, atn[2]);
-  //  Set ambient, diffuse, specular components and position of light 1
-  /*
-  glLightfv(GL_LIGHT1,GL_AMBIENT ,Ambient);
-  glLightfv(GL_LIGHT1,GL_DIFFUSE ,Diffuse);
-  glLightfv(GL_LIGHT1,GL_SPECULAR,Specular);
-  glLightfv(GL_LIGHT1,GL_POSITION,Position_1);
-  glLightf(GL_LIGHT1,GL_CONSTANT_ATTENUATION, atn[0]);
-  glLightf(GL_LIGHT1,GL_LINEAR_ATTENUATION, atn[1]);
-  glLightf(GL_LIGHT1,GL_QUADRATIC_ATTENUATION, atn[2]);
-  */
 }
 
 //glut idle func
@@ -190,16 +156,12 @@ void display()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
   transform_camera();
-  //gluLookAt(0,0,5, 0,0,0, 0,1,0);
   glPushMatrix();
-  //glRotated(ph,1,0,0);
-  //glRotated(th,0,1,0);
   runLighting();
   glUseProgram(shader);
-  for(int n=0; n<15; n++) {
+  for(int n=0; n<17; n++) {
     objects[n]->draw();
   }
-  objects[15]->draw();
   glUseProgram(0);
   glPopMatrix();
   glutSwapBuffers();
@@ -335,8 +297,9 @@ void program_init()
   objects[11] = new Cuboid(0,45,0, 1.4,1.4,1.4,  -.7,-2.2,-.1, 1,1,1, (char*)"crate.bmp"); objects[11]->init();
   objects[12] = new Cuboid(0,10,0, 1.9,1.9,1.9,  -3,-2,-.1, 1,1,1, (char*)"crate.bmp"); objects[12]->init();
   objects[13] = new HayBale(0,0,0, 2,2,2, 3.5,-2,-14, 1,1,1); objects[13]->init();
-  objects[14] = new Table(0,-45,0, 3,3,3, 11,-2,-11.5); objects[14]->init();
+  objects[14] = new Table(0,90,0, 3,3,3, 11,-2,-5); objects[14]->init();
   objects[15] = new Lamp(0,0,0, 1.5,1.5,1.5, 5,7,-3, 1,1,1); objects[15]->init();
+  objects[16] = new Sphere(90,45,20, 1,1,1, 11,0,-3.5, 1,1,1, (char*)"basketball.bmp"); objects[16]->init();
 }
 
 //game logic: shoot

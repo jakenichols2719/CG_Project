@@ -89,14 +89,14 @@ int TObject::lit_target_count()
 //===CUBOID===
 void Cuboid::init()
 {
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
 }
 void Cuboid::draw()
 {
   glPushMatrix();
   apply_transform();
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
   //draw with texture
   if(hasTexture) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -351,6 +351,49 @@ void Cone::draw()
   glPopMatrix();
 }
 
+//===SPHERE===
+void Sphere::init()
+{
+
+}
+void Sphere::draw()
+{
+  //apply transformations
+  glPushMatrix();
+  apply_transform();
+  //enable lighting and tex materials
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glScalef(.5,.5,.5); //I don't feel like typing .5 a bunch
+  //iterate rotation around y axis
+  glEnable(GL_TEXTURE_2D);
+  for(int th=0; th<360; th+=10) {
+    //draw quad strip
+    glBegin(GL_QUAD_STRIP);
+    for(int ph = 0; ph<=180; ph += 10) {
+      //find left/right tex coords for x
+      float tx_r = ((float)th+5)/180.0, tx_l = ((float)th-5)/180.0;
+      //tex coord in y direction for both vertices
+      float ty = (float)ph/180.0;
+      //find right and left points and draw
+      float right[3] = {Sin(th+5)*Sin(ph),Cos(ph),Sin(ph)*Cos(th+5)};
+      float left[3] = {Sin(th-5)*Sin(ph),Cos(ph),Sin(ph)*Cos(th-5)};
+      glTexCoord2f(tx_r, ty); glNormal3fv(right); glVertex3fv(right);
+      glTexCoord2f(tx_l, ty); glNormal3fv(left); glVertex3fv(left);
+    }
+    glEnd();
+  }
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}
+
 //===TARGETFACE===
 void TargetFace::init()
 {
@@ -554,6 +597,6 @@ void Lamp::draw()
   apply_transform();
   pole.draw();
   lamp.draw();
-  //bulb.draw();
+  bulb.draw();
   glPopMatrix();
 }

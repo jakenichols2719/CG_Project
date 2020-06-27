@@ -140,6 +140,18 @@ public:
   void draw();
 };
 
+class Sphere : public TObject
+{
+  using TObject::TObject;
+private:
+  float shine_value = 1;
+  float spec_color[4] = {1,1,1,1};
+  float em_color[4]   = {0,0,0,1};
+public:
+  void init();
+  void draw();
+};
+
 //===FABRICATED OBJECTS===
 /*
  * Target Face
@@ -239,7 +251,7 @@ class Lamp : public TObject
 private:
   Cuboid pole = Cuboid(0,0,0, .1,5.5,.1, 0,.25,0, 1,1,1, (char*)"metal.bmp");
   Cone lamp = Cone(0,0,0, .5,.5,.5, 0,-2.5,0, 1,1,1, (char*)"metal.bmp");
-  //Sphere bulb;
+  Sphere bulb = Sphere(0,0,0, .3,.3,.3, 0,-2.75,0, 1,1,1, (char*)"bulb.bmp");
 public:
   void init();
   void draw();
