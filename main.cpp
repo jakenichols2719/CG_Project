@@ -35,6 +35,7 @@ float grace = .275; //grace area for target detection
 //game logic forward declarations
 void fire();
 void light_four();
+bool running = true;
 
 //returns delta, locking to FPS when able.
 static float delta_()
@@ -125,11 +126,8 @@ void idle()
       float lamp_rot[3] = {10,(float)zh,0};
       objects[15]->set_rotation(lamp_rot);
     }
-    if(mouse_visible){
-      glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
-    }
-    else {
-      glutSetCursor(GLUT_CURSOR_NONE);
+    if(!running) {
+      exit(0);
     }
   }
    glutPostRedisplay();
@@ -147,7 +145,7 @@ void transform_camera()
   glBegin(GL_POINTS);
   glVertex3f(look[0],look[1],look[2]+4);
   glEnd();
-
+  glColor3f(1,1,1);
 }
 
 //glut display func
@@ -159,7 +157,7 @@ void display()
   glPushMatrix();
   runLighting();
   glUseProgram(shader);
-  for(int n=0; n<17; n++) {
+  for(int n=0; n<18; n++) {
     objects[n]->draw();
   }
   glUseProgram(0);
@@ -250,8 +248,11 @@ void keyboard(unsigned char key, int x, int y)
       mouse_visible = !mouse_visible;
       break;
     case 27:
+      //exit shader (?)
       glUseProgram(0);
-      exit(0);
+      //tell program to quit at next idle call
+      running = false;
+      break;
     case 32: //spacebar
       fire();
       break;
@@ -300,6 +301,7 @@ void program_init()
   objects[14] = new Table(0,90,0, 3,3,3, 11,-2,-5); objects[14]->init();
   objects[15] = new Lamp(0,0,0, 1.5,1.5,1.5, 5,7,-3, 1,1,1); objects[15]->init();
   objects[16] = new Sphere(90,45,20, 1,1,1, 11,0,-3.5, 1,1,1, (char*)"basketball.bmp"); objects[16]->init();
+  objects[17] = new TeddyBear(0,0,0, 2,2,2, 0,0,0, 1,1,1, (char*)"bulb.bmp"); objects[17]->init();
 }
 
 //game logic: shoot

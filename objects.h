@@ -51,6 +51,8 @@ public:
           float px, float py, float pz,
           float c0, float c1, float c2,
           char* file);                   // texture and color
+  //destructor
+  virtual ~TObject();
   //getters/setters
   float* scale_() { return sca; };
   float* rotation_() { return rot; };
@@ -61,7 +63,7 @@ public:
   void set_rotation(float _rot[3]) { rot[0] = _rot[0]; rot[1] = _rot[1]; rot[2] = _rot[2]; };
   void set_position(float _pos[3]) { pos[0] = _pos[0]; pos[1] = _pos[1]; pos[2] = _pos[2]; };
   void set_color(float _col[3]) { col[0] = _col[0]; col[1] = _col[1]; col[2] = _col[2]; }
-  void set_texture(char* file) { texture = LoadTexBMP(file); };
+  void set_texture(GLuint tex) { texture = tex; };
   void set_texture_scale(float x, float y) { tex_sca_x = x; tex_sca_y = y; };
   //apply transformations
   int apply_transform();
@@ -152,6 +154,24 @@ public:
   void draw();
 };
 
+/*
+ * Barrel shape
+ * like a sphere but with circles on top and bottom
+*/
+class Barrel : public TObject
+{
+  using TObject::TObject;
+private:
+  float shine_value = 1;
+  float spec_color[4] = {1,1,1,1};
+  float em_color[4]   = {0,0,0,1};
+  Circle bottom = Circle(180,0,0, .536,1,.536, 0,-.64,0, 1,1,1);
+  Circle top = Circle(0,0,0, .536,1,.536, 0,.64,0, 1,1,1);
+public:
+  void init();
+  void draw();
+};
+
 //===FABRICATED OBJECTS===
 /*
  * Target Face
@@ -167,6 +187,8 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+  GLuint unlit_texture = LoadTexBMP("target.bmp");
+  GLuint lit_texture = LoadTexBMP("target_lit.bmp");
 public:
   bool lit = false;
   void init();
@@ -252,6 +274,21 @@ private:
   Cuboid pole = Cuboid(0,0,0, .1,5.5,.1, 0,.25,0, 1,1,1, (char*)"metal.bmp");
   Cone lamp = Cone(0,0,0, .5,.5,.5, 0,-2.5,0, 1,1,1, (char*)"metal.bmp");
   Sphere bulb = Sphere(0,0,0, .3,.3,.3, 0,-2.75,0, 1,1,1, (char*)"bulb.bmp");
+public:
+  void init();
+  void draw();
+};
+
+class TeddyBear : public TObject
+{
+  using TObject::TObject;
+private:
+  Sphere body = Sphere(0,90,0, .5,.7,.5, 0,0,0, 1,1,1, (char*)"bulb.bmp");
+  Sphere head = Sphere(0,90,0, .4,.4,.4, 0,.4,0, 1,1,1, (char*)"bulb.bmp");
+  Barrel lfoot = Barrel(-70,-20,0, .3,.3,.3, -.15,-.3,.1, 0,0,0, (char*)"bulb.bmp");
+  Barrel rfoot = Barrel(-70,+20,0, .3,.3,.3, +.15,-.3,.1, 0,0,0, (char*)"bulb.bmp");
+  Barrel larm = Barrel(-30,0,-100, .3,.3,.3, -.25,.1,.1, 0,0,0, (char*)"bulb.bmp");
+  Barrel rarm = Barrel(-30,0,100, .3,.3,.3, +.25,.1,.1, 0,0,0, (char*)"bulb.bmp");
 public:
   void init();
   void draw();

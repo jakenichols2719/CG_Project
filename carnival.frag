@@ -22,7 +22,7 @@ void main()
   float Is = (Id>0.0) ? pow(max(dot(R,V),0.0) , gl_FrontMaterial.shininess) : 0.0;
   // Attenuation
   float d = length(Light);
-  float At = clamp(11.0/d, 0.0, 1.0);
+  float At = clamp(10.0/d, 0.0, 1.0);
 
   //toonify: alter intensity
   float intensity = dot(normalize(N),normalize(L)) * At;

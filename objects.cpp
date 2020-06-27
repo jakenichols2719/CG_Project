@@ -36,6 +36,12 @@ TObject::TObject(float rx, float ry, float rz,
   texture = LoadTexBMP(file);
 }
 
+TObject::~TObject()
+{
+  //irresponsible destructor definition
+  //can override if an object needs it
+}
+
 int TObject::apply_transform()
 {
   //apply texture
@@ -50,7 +56,7 @@ int TObject::apply_transform()
   glRotatef(rot[2],0,0,1);
   glRotatef(rot[1],0,1,0);
   glRotatef(rot[0],1,0,0);
-    glScalef(sca[0],sca[1],sca[2]);
+  glScalef(sca[0],sca[1],sca[2]);
   return 0;
 }
 
@@ -394,6 +400,52 @@ void Sphere::draw()
   glPopMatrix();
 }
 
+//===BARREL===
+void Barrel::init()
+{
+  bottom.set_texture(texture);
+  top.set_texture(texture);
+}
+void Barrel::draw()
+{
+  //apply transformations
+  glPushMatrix();
+  apply_transform();
+  //enable lighting and tex materials
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glScalef(.5,.5,.5); //I don't feel like typing .5 a bunch
+  //iterate rotation around y axis
+  glEnable(GL_TEXTURE_2D);
+  for(int th=0; th<360; th+=10) {
+    //draw quad strip
+    glBegin(GL_QUAD_STRIP);
+    for(int ph = 50; ph<=130; ph += 10) {
+      //find left/right tex coords for x
+      float tx_r = ((float)th+5)/180.0, tx_l = ((float)th-5)/180.0;
+      //tex coord in y direction for both vertices
+      float ty = (float)ph/180.0;
+      //find right and left points and draw
+      float right[3] = {Sin(th+5)*Sin(ph)*(float).7,Cos(ph),Sin(ph)*Cos(th+5)*(float).7};
+      float left[3] = {Sin(th-5)*Sin(ph)*(float).7,Cos(ph),Sin(ph)*Cos(th-5)*(float).7};
+      glTexCoord2f(tx_r, ty); glNormal3fv(right); glVertex3fv(right);
+      glTexCoord2f(tx_l, ty); glNormal3fv(left); glVertex3fv(left);
+    }
+    glEnd();
+  }
+  bottom.draw();
+  top.draw();
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}
+
 //===TARGETFACE===
 void TargetFace::init()
 {
@@ -435,13 +487,13 @@ void TargetFace::draw()
 void TargetFace::toggle_light()
 {
   lit = !lit;
-  if(lit) front.set_texture((char*)"target_lit.bmp");
-  if(!lit) front.set_texture((char*)"target.bmp");
+  if(lit) front.set_texture(lit_texture);
+  if(!lit) front.set_texture(unlit_texture);
 }
 void TargetFace::toggle_light_off()
 {
   if(lit) {
-    front.set_texture((char*)"target.bmp");
+    front.set_texture(unlit_texture);
     lit = false;
   }
 }
@@ -585,7 +637,6 @@ void Table::draw()
   glPopMatrix();
 }
 
-
 //===LAMP===
 void Lamp::init()
 {
@@ -598,5 +649,27 @@ void Lamp::draw()
   pole.draw();
   lamp.draw();
   bulb.draw();
+  glPopMatrix();
+}
+
+//===TEDDYBEAR===
+void TeddyBear::init()
+{
+
+}
+void TeddyBear::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  head.draw();
+  body.draw();
+  //draw legs
+  lfoot.draw();
+  rfoot.draw();
+  //draw arms
+  larm.draw();
+  rarm.draw();
+  //draw ears
+  //draw snout
   glPopMatrix();
 }
