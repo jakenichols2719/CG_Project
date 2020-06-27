@@ -271,13 +271,14 @@ void Circle::draw()
     glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
     for(int th = 0; th < 360; th+=10) {
-      float t0 = th/180;
-      float t1 = (th+10)/180;
+      int texth = th%90;
+      float t0 = (float)(texth+5)/90;
+      float t1 = (float)(texth-5)/90;
       glNormal3f(0,1,0);
       glTexCoord2f(0,1); glVertex3f(0,0,0);
       glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),0,Cos(th+5));
       glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),0,Cos(th-5));
-      glTexCoord2f(1,1); glVertex3f(0,0,0);
+      glTexCoord2f(t1,1); glVertex3f(0,0,0);
     }
     glEnd();
     glDisable(GL_TEXTURE_2D);
@@ -585,6 +586,7 @@ void HayBale::init()
 }
 void HayBale::draw()
 {
+
   glPushMatrix();
   apply_transform();
   //draw target faces
@@ -594,7 +596,6 @@ void HayBale::draw()
   //need to reset so that texture gets applied
   glPushMatrix();
   apply_transform();
-  //draw wooden frame
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
@@ -602,17 +603,40 @@ void HayBale::draw()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
                   GL_NEAREST);
   glEnable(GL_TEXTURE_2D);
+
   glBegin(GL_QUADS);
     for(int th = 0; th < 360; th+=10) {
+      int texth = th%180;
+      float t0 = (float)(texth+5)/180;
+      float t1 = (float)(texth-5)/180;
       glNormal3f(-Sin(th+5),0,Cos(th+5));
-      glTexCoord2f(0,1); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
+      glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
       glNormal3f(-Sin(th-5),0,Cos(th-5));
-      glTexCoord2f(0,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
-      glTexCoord2f(1,0); glVertex3f(-Sin(th-5),+.5,Cos(th-5));
+      glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
+      glTexCoord2f(t1,1); glVertex3f(-Sin(th-5),+.5,Cos(th-5));
       glNormal3f(-Sin(th+5),0,Cos(th+5));
-      glTexCoord2f(1,1); glVertex3f(-Sin(th+5),+.5,Cos(th+5));
+      glTexCoord2f(t0,1); glVertex3f(-Sin(th+5),+.5,Cos(th+5));
     }
   glEnd();
+
+  /*
+  glBegin(GL_QUAD_STRIP);
+    //iterate circle
+    for(int th=0; th<360; th+=10) {
+      float texr = (th+5)/360;
+      float texl = (th-5)/360;
+      //draw cosine wave to simulate pile of hay
+      for(int ph=0; ph<180; ph++) {
+        float texy=ph/180;
+        float dist = (float)ph/180;
+        float right[3] = {Sin(th+5)*dist, Cos(ph)*(float).5, Cos(th+5)*dist};
+        float left[3] = {Sin(th-5)*dist, Cos(ph)*(float).5, Cos(th-5)*dist};
+        glTexCoord2f(texr,texy); glNormal3f(1,0,0); glVertex3fv(right);
+        glTexCoord2f(texl,texy); glNormal3f(1,0,0); glVertex3fv(left);
+      }
+    }
+  glEnd();
+  */
   glDisable(GL_TEXTURE_2D);
   glPopMatrix();
 }
@@ -662,6 +686,7 @@ void TeddyBear::draw()
   glPushMatrix();
   apply_transform();
   head.draw();
+  snout.draw();
   body.draw();
   //draw legs
   lfoot.draw();
@@ -670,6 +695,8 @@ void TeddyBear::draw()
   larm.draw();
   rarm.draw();
   //draw ears
+  lear.draw();
+  rear.draw();
   //draw snout
   glPopMatrix();
 }

@@ -283,12 +283,15 @@ class TeddyBear : public TObject
 {
   using TObject::TObject;
 private:
-  Sphere body = Sphere(0,90,0, .5,.7,.5, 0,0,0, 1,1,1, (char*)"bulb.bmp");
-  Sphere head = Sphere(0,90,0, .4,.4,.4, 0,.4,0, 1,1,1, (char*)"bulb.bmp");
-  Barrel lfoot = Barrel(-70,-20,0, .3,.3,.3, -.15,-.3,.1, 0,0,0, (char*)"bulb.bmp");
-  Barrel rfoot = Barrel(-70,+20,0, .3,.3,.3, +.15,-.3,.1, 0,0,0, (char*)"bulb.bmp");
-  Barrel larm = Barrel(-30,0,-100, .3,.3,.3, -.25,.1,.1, 0,0,0, (char*)"bulb.bmp");
-  Barrel rarm = Barrel(-30,0,100, .3,.3,.3, +.25,.1,.1, 0,0,0, (char*)"bulb.bmp");
+  Sphere body = Sphere(0,90,0, .5,.7,.5, 0,0,0, 1,1,1, (char*)"bearbase.bmp");
+  Sphere head = Sphere(0,90,0, .4,.4,.4, 0,.4,0, 1,1,1, (char*)"bearhead.bmp");
+  Sphere snout = Sphere(0,90,180, .15,.15,.15, 0,.35,.15, 1,1,1, (char*)"bearsnout.bmp");
+  Barrel lfoot = Barrel(-70,-20,0, .3,.3,.3, -.15,-.3,.1, 1,1,1, (char*)"bearbase.bmp");
+  Barrel rfoot = Barrel(-70,+20,0, .3,.3,.3, +.15,-.3,.1, 1,1,1, (char*)"bearbase.bmp");
+  Barrel larm = Barrel(-30,0,-100, .3,.3,.3, -.25,.1,.1, 1,1,1, (char*)"bearbase.bmp");
+  Barrel rarm = Barrel(-30,0,100, .3,.3,.3, +.25,.1,.1, 1,1,1, (char*)"bearbase.bmp");
+  Sphere lear = Sphere(0,90,10, .1,.20,.20, .15,.5,0, 1,1,1, (char*)"bearear.bmp");
+  Sphere rear = Sphere(0,90,10, .1,.20,.20, -.15,.5,0, 1,1,1, (char*)"bearear.bmp");
 public:
   void init();
   void draw();
