@@ -95,6 +95,55 @@ int TObject::lit_target_count()
 //===CUBOID===
 void Cuboid::init()
 {
+  draw_list = glGenLists(1);
+  glNewList(draw_list,GL_COMPILE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_QUADS);
+    glColor3f(1,1,1);
+    glNormal3f( 0, 0, .5);
+    glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5, .5);
+    glTexCoord2f(tex_sca_x, 0.0); glVertex3f(+.5,-.5, .5);
+    glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5, .5);
+    glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5, .5);
+    //  Back
+    glNormal3f( 0, 0,-.5);
+    glTexCoord2f(0.0,     0.0); glVertex3f(+.5,-.5,-.5);
+    glTexCoord2f(tex_sca_x, 0.0); glVertex3f(-.5,-.5,-.5);
+    glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(-.5,+.5,-.5);
+    glTexCoord2f(0.0,     tex_sca_y); glVertex3f(+.5,+.5,-.5);
+    //  Right
+    glNormal3f(+.5, 0, 0);
+    glTexCoord2f(0.0,     0.0); glVertex3f(+.5,-.5,+.5);
+    glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,-.5,-.5);
+    glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5,-.5);
+    glTexCoord2f(0.0,     tex_sca_y); glVertex3f(+.5,+.5,+.5);
+    //  Left
+    glNormal3f(-.5, 0, 0);
+    glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5,-.5);
+    glTexCoord2f(tex_sca_x,     0.0); glVertex3f(-.5,-.5,+.5);
+    glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(-.5,+.5,+.5);
+    glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5,-.5);
+    //  Top
+    glNormal3f( 0,+.5, 0);
+    glTexCoord2f(0.0,     0.0); glVertex3f(-.5,+.5,+.5);
+    glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,+.5,+.5);
+    glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5,-.5);
+    glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5,-.5);
+    //  Bottom
+    glNormal3f( 0,-.5, 0);
+    glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5,-.5);
+    glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,-.5,-.5);
+    glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,-.5,+.5);
+    glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,-.5,+.5);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
 }
 void Cuboid::draw()
 {
@@ -105,52 +154,7 @@ void Cuboid::draw()
   glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
   //draw with texture
   if(hasTexture) {
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    GL_NEAREST);
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-      glColor3f(col[0],col[1],col[2]);
-      glNormal3f( 0, 0, .5);
-      glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5, .5);
-      glTexCoord2f(tex_sca_x, 0.0); glVertex3f(+.5,-.5, .5);
-      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5, .5);
-      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5, .5);
-      //  Back
-      glNormal3f( 0, 0,-.5);
-      glTexCoord2f(0.0,     0.0); glVertex3f(+.5,-.5,-.5);
-      glTexCoord2f(tex_sca_x, 0.0); glVertex3f(-.5,-.5,-.5);
-      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(-.5,+.5,-.5);
-      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(+.5,+.5,-.5);
-      //  Right
-      glNormal3f(+.5, 0, 0);
-      glTexCoord2f(0.0,     0.0); glVertex3f(+.5,-.5,+.5);
-      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,-.5,-.5);
-      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5,-.5);
-      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(+.5,+.5,+.5);
-      //  Left
-      glNormal3f(-.5, 0, 0);
-      glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5,-.5);
-      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(-.5,-.5,+.5);
-      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(-.5,+.5,+.5);
-      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5,-.5);
-      //  Top
-      glNormal3f( 0,+.5, 0);
-      glTexCoord2f(0.0,     0.0); glVertex3f(-.5,+.5,+.5);
-      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,+.5,+.5);
-      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,+.5,-.5);
-      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,+.5,-.5);
-      //  Bottom
-      glNormal3f( 0,-.5, 0);
-      glTexCoord2f(0.0,     0.0); glVertex3f(-.5,-.5,-.5);
-      glTexCoord2f(tex_sca_x,     0.0); glVertex3f(+.5,-.5,-.5);
-      glTexCoord2f(tex_sca_x, tex_sca_y); glVertex3f(+.5,-.5,+.5);
-      glTexCoord2f(0.0,     tex_sca_y); glVertex3f(-.5,-.5,+.5);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+    glCallList(draw_list);
   }
   //draw without texture
   else {
@@ -249,39 +253,43 @@ void SurfaceRect::draw()
 //===CIRCLE===
 void Circle::init()
 {
-
+  draw_list = glGenLists(1);
+  glNewList(draw_list, GL_COMPILE);
+  //enable lighting materials
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glColor3f(1,1,1);
+  //draw
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_QUAD_STRIP);
+  for(int th = 0; th <= 360; th+=10) {
+    int texth = th%90;
+    float t0 = (float)(texth+5)/90;
+    float t1 = (float)(texth-5)/90;
+    glNormal3f(0,1,0);
+    //top points
+    glTexCoord2f(0,1); glVertex3f(0,0,0);
+    glTexCoord2f(t1,1); glVertex3f(0,0,0);
+    glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),0,Cos(th+5));
+    glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),0,Cos(th-5));
+  }
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
 }
 void Circle::draw()
 {
   glPushMatrix();
   apply_transform();
   if(hasTexture) {
-    //enable lighting materials
-    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    GL_NEAREST);
-    glColor3f(col[0], col[1], col[2]);
-    //draw
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    for(int th = 0; th < 360; th+=10) {
-      int texth = th%90;
-      float t0 = (float)(texth+5)/90;
-      float t1 = (float)(texth-5)/90;
-      glNormal3f(0,1,0);
-      glTexCoord2f(0,1); glVertex3f(0,0,0);
-      glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),0,Cos(th+5));
-      glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),0,Cos(th-5));
-      glTexCoord2f(t1,1); glVertex3f(0,0,0);
-    }
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+    glCallList(draw_list);
   }
   else {
     //enable lighting materials
@@ -306,37 +314,41 @@ void Circle::draw()
 //===CONE===
 void Cone::init()
 {
-
+  base.init();
+  draw_list = glGenLists(1);
+  glNewList(draw_list, GL_COMPILE);
+  //enable lighting materials
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glColor3f(col[0], col[1], col[2]);
+  //draw
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_QUADS);
+  for(int th = 0; th < 360; th+=10) {
+    float t0 = th/180;
+    float t1 = (th+10)/180;
+    glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(0,1); glVertex3f(0,.5,0);
+    glNormal3f(-Sin(th+5),1,Cos(th+5)); glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
+    glNormal3f(-Sin(th-5),1,Cos(th-5)); glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
+    glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(1,1); glVertex3f(0,.5,0);
+  }
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
 }
 void Cone::draw()
 {
   glPushMatrix();
   apply_transform();
   if(hasTexture) {
-    //enable lighting materials
-    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    GL_NEAREST);
-    glColor3f(col[0], col[1], col[2]);
-    //draw
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    for(int th = 0; th < 360; th+=10) {
-      float t0 = th/180;
-      float t1 = (th+10)/180;
-      glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(0,1); glVertex3f(0,.5,0);
-      glNormal3f(-Sin(th+5),1,Cos(th+5)); glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
-      glNormal3f(-Sin(th-5),1,Cos(th-5)); glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
-      glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(1,1); glVertex3f(0,.5,0);
-    }
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+    glCallList(draw_list);
   }
   else {
     //enable lighting materials
@@ -361,13 +373,8 @@ void Cone::draw()
 //===SPHERE===
 void Sphere::init()
 {
-
-}
-void Sphere::draw()
-{
-  //apply transformations
-  glPushMatrix();
-  apply_transform();
+  draw_list = glGenLists(1);
+  glNewList(draw_list, GL_COMPILE);
   //enable lighting and tex materials
   glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
   glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
@@ -398,14 +405,22 @@ void Sphere::draw()
     glEnd();
   }
   glDisable(GL_TEXTURE_2D);
+  glEndList();
+}
+void Sphere::draw()
+{
+  //apply transformations
+  glPushMatrix();
+  apply_transform();
+  glCallList(draw_list);
   glPopMatrix();
 }
 
 //===BARREL===
 void Barrel::init()
 {
-  bottom.set_texture(texture);
-  top.set_texture(texture);
+  bottom.set_texture(texture); bottom.init();
+  top.set_texture(texture); top.init();
 }
 void Barrel::draw()
 {
@@ -450,9 +465,11 @@ void Barrel::draw()
 //===TARGETFACE===
 void TargetFace::init()
 {
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  //glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  //glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  //glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  front.init();
+  back.init();
 }
 void TargetFace::draw()
 {
@@ -502,7 +519,10 @@ void TargetFace::toggle_light_off()
 //===FULLTARGET
 void FullTarget::init()
 {
-
+  prop1.init();
+  prop2.init();
+  prop3.init();
+  targ.init();
 }
 void FullTarget::draw()
 {
@@ -530,11 +550,11 @@ void TargetRack::init()
 {
   for(int y=0; y<4; y++) {
     float height = 3.3 - 2*y;
-    shelves[y] = Cuboid(0,0,0, 6,.2,.5, 0,height,0, 1,1,1, (char*)"medwood.bmp");
+    shelves[y] = Cuboid(0,0,0, 6,.2,.5, 0,height,0, 1,1,1, (char*)"medwood.bmp"); shelves[y].init();
     for(int x=0; x<4; x++) {
       float posx = -2.25 + 1.5*x;
       float posy = 4 - 2*y;
-      targets[x + y*4] = FullTarget(0,0,0, .75,.75,1, posx,posy,0, 1,1,1, (char*)"darkwood.bmp");
+      targets[x + y*4] = FullTarget(0,0,0, .75,.75,1, posx,posy,0, 1,1,1, (char*)"darkwood.bmp"); targets[x+y*4].init();
     }
   }
   leftside.init();
@@ -582,6 +602,8 @@ int TargetRack::lit_target_count()
 //===HAYBALE===
 void HayBale::init()
 {
+  top.init();
+  bottom.init();
   texture = LoadTexBMP("hay.bmp");
 }
 void HayBale::draw()
@@ -641,14 +663,61 @@ void HayBale::draw()
   glPopMatrix();
 }
 
+//===HAYPILE===
+void HayPile::init()
+{
+
+}
+void HayPile::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  //enable lighting materials
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glColor3f(1,1,1);
+  //draw
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_QUAD_STRIP);
+  for(int th = 0; th <= 360; th+=10) {
+    int texth = th%90;
+    float t0 = (float)(texth+5)/90;
+    float t1 = (float)(texth-5)/90;
+    glNormal3f(0,1,0);
+    //top points
+    glTexCoord2f(0,1); glVertex3f(0,.5,0);
+    glTexCoord2f(t1,1); glVertex3f(0,.5,0);
+    for(int ph=0; ph<=180; ph+=10) {
+      float dist = (float)(ph)/180.0;
+      //std::cout << -Sin(th+5)*dist << "," << Cos(ph)*.5 << "," << Cos(th+5)*dist << std::endl;
+      glTexCoord2f(t0,0); glVertex3f(-Sin(th+5)*dist,Cos(ph)*.5,Cos(th+5)*dist);
+      glTexCoord2f(t1,0); glVertex3f(-Sin(th-5)*dist,Cos(ph)*.5,Cos(th-5)*dist);
+    }
+  }
+  glEnd();
+  glPointSize(10);
+  glBegin(GL_POINTS);
+  glVertex3f(0,0,0);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glPopMatrix();
+}
+
 //===TABLE===
 void Table::init()
 {
-  legs[0] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp");
-  legs[1] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp");
-  legs[2] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp");
-  legs[3] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp");
-  top =     Cuboid(0,0,0, 2,.2,1,   0.0,.4,0.0,  1,1,1, (char*)"medwood.bmp");
+  legs[0] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp"); legs[0].init();
+  legs[1] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp"); legs[1].init();
+  legs[2] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp"); legs[2].init();
+  legs[3] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp"); legs[3].init();
+  top =     Cuboid(0,0,0, 2,.2,1,   0.0,.4,0.0,  1,1,1, (char*)"medwood.bmp"); top.init();
 }
 void Table::draw()
 {
@@ -664,7 +733,9 @@ void Table::draw()
 //===LAMP===
 void Lamp::init()
 {
-
+  pole.init();
+  lamp.init();
+  bulb.init();
 }
 void Lamp::draw()
 {
@@ -679,7 +750,9 @@ void Lamp::draw()
 //===TEDDYBEAR===
 void TeddyBear::init()
 {
-
+  head.init();
+  snout.init();
+  body.init();
 }
 void TeddyBear::draw()
 {

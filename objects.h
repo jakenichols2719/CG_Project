@@ -63,7 +63,7 @@ public:
   void set_rotation(float _rot[3]) { rot[0] = _rot[0]; rot[1] = _rot[1]; rot[2] = _rot[2]; };
   void set_position(float _pos[3]) { pos[0] = _pos[0]; pos[1] = _pos[1]; pos[2] = _pos[2]; };
   void set_color(float _col[3]) { col[0] = _col[0]; col[1] = _col[1]; col[2] = _col[2]; }
-  void set_texture(GLuint tex) { texture = tex; };
+  void set_texture(GLuint tex) { texture = tex; init(); };
   void set_texture_scale(float x, float y) { tex_sca_x = x; tex_sca_y = y; };
   //apply transformations
   int apply_transform();
@@ -90,6 +90,7 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+  GLuint draw_list;
 public:
   void init();
   void draw();
@@ -124,6 +125,7 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+  GLuint draw_list;
 public:
   void init();
   void draw();
@@ -137,6 +139,7 @@ private:
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
   Circle base = Circle(180,0,0, 1,1,1, 0,-.5,0, 1,1,1);
+  GLuint draw_list;
 public:
   void init();
   void draw();
@@ -149,6 +152,7 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+  GLuint draw_list;
 public:
   void init();
   void draw();
@@ -235,10 +239,29 @@ public:
   void toggle_light_off_at(int x, int y);
   int lit_target_count();
 };
+
 /*
  * Hay bale object
 */
 class HayBale : public TObject
+{
+  using TObject::TObject;
+private:
+  Circle top = Circle(0,0,0, 1,1,1, 0,.5,0, 1,1,1, (char*)"hay.bmp");
+  Circle bottom = Circle(180,0,0, 1,1,1, 0,-.5,0, 1,1,1, (char*)"hay.bmp");
+  float shine_value = 1;
+  float spec_color[4] = {1,1,1,1};
+  float em_color[4]   = {0,0,0,1};
+public:
+  void init();
+  void draw();
+};
+
+/*
+ * Hay pile object
+ * An attempt to make a better-looking hay bale.
+*/
+class HayPile : public TObject
 {
   using TObject::TObject;
 private:

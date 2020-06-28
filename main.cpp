@@ -1,7 +1,7 @@
 #include "objects.h"
 #include "shaderfunc.h"
 
-TObject* objects[20];
+TObject* objects[25];
 //viewing variables
 float th = 0;
 float ph = 0;
@@ -157,7 +157,7 @@ void display()
   glPushMatrix();
   runLighting();
   glUseProgram(shader);
-  for(int n=0; n<18; n++) {
+  for(int n=0; n<21; n++) {
     objects[n]->draw();
   }
   glUseProgram(0);
@@ -297,12 +297,14 @@ void program_init()
   objects[10] = new Cuboid(0,-10,0, 1.6,1.6,1.6,  1.0,-2.2,.2, 1,1,1, (char*)"crate.bmp"); objects[10]->init();
   objects[11] = new Cuboid(0,45,0, 1.4,1.4,1.4,  -.7,-2.2,-.1, 1,1,1, (char*)"crate.bmp"); objects[11]->init();
   objects[12] = new Cuboid(0,10,0, 1.9,1.9,1.9,  -3,-2,-.1, 1,1,1, (char*)"crate.bmp"); objects[12]->init();
-  objects[13] = new HayBale(0,0,0, 2,2,2, 3.5,-2,-14, 1,1,1); objects[13]->init();
-  //objects[13] = new HayBale(45,0,0, 2,2,2, 0,0,-3, 1,1,1); objects[13]->init();
+  objects[13] = new HayPile(0,0,0, 2,2,2, 3.5,-2,-14, 1,1,1, (char*)"hay.bmp"); objects[13]->init();
   objects[14] = new Table(0,90,0, 3,3,3, 11,-2,-5); objects[14]->init();
   objects[15] = new Lamp(0,0,0, 1.5,1.5,1.5, 5,7,-3, 1,1,1); objects[15]->init();
   objects[16] = new Sphere(90,45,20, 1,1,1, 10.8,0,-3, 1,1,1, (char*)"basketball.bmp"); objects[16]->init();
   objects[17] = new TeddyBear(-13,-70,0, 3,3,3, 11,.6,-4.5, 1,1,1, (char*)"bulb.bmp"); objects[17]->init();
+  objects[18] = new HayPile(0,0,0, 3,1,3, 10,-2.5,5, 1,1,1, (char*)"hay.bmp");
+  objects[19] = new HayPile(0,0,0, 3,2,3, 13,-2,6, 1,1,1, (char*)"hay.bmp");
+  objects[20] = new HayPile(0,0,0, 3,1.5,3, 14,-2.85,4, 1,1,1, (char*)"hay.bmp");
 }
 
 //game logic: shoot
