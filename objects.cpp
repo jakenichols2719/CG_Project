@@ -203,7 +203,29 @@ void Cuboid::draw()
 //===RECTANGLE===
 void SurfaceRect::init()
 {
-
+  draw_list = glGenLists(1);
+  glNewList(draw_list, GL_COMPILE);
+  //enable textures
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                  GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                  GL_NEAREST);
+  glEnable(GL_TEXTURE_2D);
+  //enable lighting materials
+  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+  glBegin(GL_QUADS);
+    glNormal3f(0,1,0);
+    glTexCoord2f(0.0,    0.0); glVertex3f(-.5,0,.5);
+    glTexCoord2f(tex_sca_x,0.0); glVertex3f(.5,0,.5);
+    glTexCoord2f(tex_sca_x,tex_sca_y); glVertex3f(.5,0,-.5);
+    glTexCoord2f(0.0,    tex_sca_y); glVertex3f(-.5,0,-.5);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
 }
 void SurfaceRect::draw()
 {
@@ -211,26 +233,7 @@ void SurfaceRect::draw()
   apply_transform();
   //draw with texture
   if(hasTexture) {
-    //enable textures
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    GL_NEAREST);
-    glEnable(GL_TEXTURE_2D);
-    //enable lighting materials
-    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
-    glBegin(GL_QUADS);
-      glNormal3f(0,1,0);
-      glTexCoord2f(0.0,    0.0); glVertex3f(-.5,0,.5);
-      glTexCoord2f(tex_sca_x,0.0); glVertex3f(.5,0,.5);
-      glTexCoord2f(tex_sca_x,tex_sca_y); glVertex3f(.5,0,-.5);
-      glTexCoord2f(0.0,    tex_sca_y); glVertex3f(-.5,0,-.5);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+    glCallList(draw_list);
   }
   //draw without texture
   else {
@@ -249,6 +252,52 @@ void SurfaceRect::draw()
   }
   glPopMatrix();
 }
+
+//===CURVEDRECT===
+void CurvedRect::init()
+{
+  draw_list = glGenLists(1);
+  glNewList(draw_list,GL_COMPILE);
+    //enable textures
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_NEAREST);
+    glEnable(GL_TEXTURE_2D);
+    //enable lighting materials
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+    glBegin(GL_QUAD_STRIP);
+      //first vertices
+      glNormal3f(0,1,0);
+      glTexCoord2f(tex_sca_x,0.0); glVertex3f(.5,0,-.5);
+      glTexCoord2f(0.0,      0.0); glVertex3f(-.5,0,-.5);
+      //halfway
+      glTexCoord2f(tex_sca_x,tex_sca_y/2); glVertex3f(.5,0,0);
+      glTexCoord2f(0.0,      tex_sca_y/2); glVertex3f(-.5,0,0);
+      //curved part
+      for(int ph=0; ph<90; ph+=10){
+        float dist = (float)ph/180.0;
+        float height = (-Cos(ph+180.0)*2)-2;
+        float ty = (tex_sca_y/2)+dist; // y texture for these vertices
+        glTexCoord2f(tex_sca_x, ty); glVertex3f(.5,height,dist);
+        glTexCoord2f(0.0      , ty); glVertex3f(-.5,height,dist);
+      }
+    glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
+}
+void CurvedRect::draw()
+{
+  glPushMatrix();
+  apply_transform();
+  glCallList(draw_list);
+  glPopMatrix();
+}
+
 
 //===CIRCLE===
 void Circle::init()
@@ -421,44 +470,48 @@ void Barrel::init()
 {
   bottom.set_texture(texture); bottom.init();
   top.set_texture(texture); top.init();
+  draw_list = glGenLists(1);
+  glNewList(draw_list, GL_COMPILE);
+    //enable lighting and tex materials
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_NEAREST);
+    glScalef(.5,.5,.5); //I don't feel like typing .5 a bunch
+    //iterate rotation around y axis
+    glEnable(GL_TEXTURE_2D);
+    for(int th=0; th<360; th+=10) {
+      //draw quad strip
+      glBegin(GL_QUAD_STRIP);
+        for(int ph = 50; ph<=130; ph += 10) {
+          //find left/right tex coords for x
+          float tx_r = ((float)th+5)/180.0, tx_l = ((float)th-5)/180.0;
+          //tex coord in y direction for both vertices
+          float ty = (float)ph/180.0;
+          //find right and left points and draw
+          float right[3] = {Sin(th+5)*Sin(ph)*(float).7,Cos(ph),Sin(ph)*Cos(th+5)*(float).7};
+          float left[3] = {Sin(th-5)*Sin(ph)*(float).7,Cos(ph),Sin(ph)*Cos(th-5)*(float).7};
+          glTexCoord2f(tx_r, ty); glNormal3fv(right); glVertex3fv(right);
+          glTexCoord2f(tx_l, ty); glNormal3fv(left); glVertex3fv(left);
+        }
+      glEnd();
+    }
+    bottom.draw();
+    top.draw();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
 }
 void Barrel::draw()
 {
   //apply transformations
   glPushMatrix();
   apply_transform();
-  //enable lighting and tex materials
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                  GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                  GL_NEAREST);
-  glScalef(.5,.5,.5); //I don't feel like typing .5 a bunch
-  //iterate rotation around y axis
-  glEnable(GL_TEXTURE_2D);
-  for(int th=0; th<360; th+=10) {
-    //draw quad strip
-    glBegin(GL_QUAD_STRIP);
-    for(int ph = 50; ph<=130; ph += 10) {
-      //find left/right tex coords for x
-      float tx_r = ((float)th+5)/180.0, tx_l = ((float)th-5)/180.0;
-      //tex coord in y direction for both vertices
-      float ty = (float)ph/180.0;
-      //find right and left points and draw
-      float right[3] = {Sin(th+5)*Sin(ph)*(float).7,Cos(ph),Sin(ph)*Cos(th+5)*(float).7};
-      float left[3] = {Sin(th-5)*Sin(ph)*(float).7,Cos(ph),Sin(ph)*Cos(th-5)*(float).7};
-      glTexCoord2f(tx_r, ty); glNormal3fv(right); glVertex3fv(right);
-      glTexCoord2f(tx_l, ty); glNormal3fv(left); glVertex3fv(left);
-    }
-    glEnd();
-  }
-  bottom.draw();
-  top.draw();
-  glDisable(GL_TEXTURE_2D);
+  glCallList(draw_list);
   glPopMatrix();
 }
 
@@ -666,47 +719,46 @@ void HayBale::draw()
 //===HAYPILE===
 void HayPile::init()
 {
-
+  draw_list = glGenLists(1);
+  glNewList(draw_list, GL_COMPILE);
+    //enable lighting materials
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                    GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                    GL_NEAREST);
+    glColor3f(1,1,1);
+    //draw
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUAD_STRIP);
+    for(int th = 0; th <= 360; th+=10) {
+      int texth = th%90;
+      float t0 = (float)(texth+5)/90;
+      float t1 = (float)(texth-5)/90;
+      glNormal3f(0,1,0);
+      //top points
+      glTexCoord2f(0,1); glVertex3f(0,.5,0);
+      glTexCoord2f(t1,1); glVertex3f(0,.5,0);
+      for(int ph=0; ph<=180; ph+=10) {
+        float dist = (float)(ph)/180.0;
+        //std::cout << -Sin(th+5)*dist << "," << Cos(ph)*.5 << "," << Cos(th+5)*dist << std::endl;
+        glTexCoord2f(t0,0); glVertex3f(-Sin(th+5)*dist,Cos(ph)*.5,Cos(th+5)*dist);
+        glTexCoord2f(t1,0); glVertex3f(-Sin(th-5)*dist,Cos(ph)*.5,Cos(th-5)*dist);
+      }
+    }
+    glEnd();
+  glDisable(GL_TEXTURE_2D);
+  glEndList();
 }
 void HayPile::draw()
 {
   glPushMatrix();
   apply_transform();
-  //enable lighting materials
-  glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shine_value);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,spec_color);
-  glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,em_color);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                  GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                  GL_NEAREST);
-  glColor3f(1,1,1);
-  //draw
-  glEnable(GL_TEXTURE_2D);
-  glBegin(GL_QUAD_STRIP);
-  for(int th = 0; th <= 360; th+=10) {
-    int texth = th%90;
-    float t0 = (float)(texth+5)/90;
-    float t1 = (float)(texth-5)/90;
-    glNormal3f(0,1,0);
-    //top points
-    glTexCoord2f(0,1); glVertex3f(0,.5,0);
-    glTexCoord2f(t1,1); glVertex3f(0,.5,0);
-    for(int ph=0; ph<=180; ph+=10) {
-      float dist = (float)(ph)/180.0;
-      //std::cout << -Sin(th+5)*dist << "," << Cos(ph)*.5 << "," << Cos(th+5)*dist << std::endl;
-      glTexCoord2f(t0,0); glVertex3f(-Sin(th+5)*dist,Cos(ph)*.5,Cos(th+5)*dist);
-      glTexCoord2f(t1,0); glVertex3f(-Sin(th-5)*dist,Cos(ph)*.5,Cos(th-5)*dist);
-    }
-  }
-  glEnd();
-  glPointSize(10);
-  glBegin(GL_POINTS);
-  glVertex3f(0,0,0);
-  glEnd();
-  glDisable(GL_TEXTURE_2D);
+  glCallList(draw_list);
   glPopMatrix();
 }
 
@@ -753,6 +805,9 @@ void TeddyBear::init()
   head.init();
   snout.init();
   body.init();
+  lear.init(); rear.init();
+  lfoot.init(); rfoot.init();
+  larm.init(); rarm.init();
 }
 void TeddyBear::draw()
 {

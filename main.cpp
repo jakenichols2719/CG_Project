@@ -12,7 +12,7 @@ float look[3] = {0,0,-1}; //look vector
 //lighting variables
 float ambient   =  30;  // Ambient intensity (%)
 float diffuse   =  40;  // Diffuse intensity (%)
-float specular  =  60;  // Specular intensity (%)
+float specular  =  50;  // Specular intensity (%)
 float atn[3] = {1,.10,0};
 int zh        =  90;  // Used to rotate lamp/center light
 
@@ -248,8 +248,12 @@ void keyboard(unsigned char key, int x, int y)
       mouse_visible = !mouse_visible;
       break;
     case 27:
-      //exit shader (?)
+      //exit shader
       glUseProgram(0);
+      //destroy objects
+      for(int n=0; n<25; n++) {
+        delete objects[n];
+      }
       //tell program to quit at next idle call
       running = false;
       break;
@@ -271,25 +275,24 @@ void program_init()
   //targetrack
   objects[0] = new TargetRack(0,0,0, 1,1,1, 0,0,-10); objects[0]->init();
   light_four();
-  //walls; target.bmp is a temp for a carnival tent texture. Work on it.
   //floor
-  objects[1] = new SurfaceRect(0,0,0, 20,1,25, 5,-3,-4, 1,1,1, (char*)"hay.bmp"); objects[1]->init();
-  objects[1]->set_texture_scale(10,12.5);
+  objects[1] = new SurfaceRect(0,0,0, 30,1,35, 6,-3,-6, 1,1,1, (char*)"hay.bmp"); objects[1]->init();
+  objects[1]->set_texture_scale(15,17.5);
   //left
-  objects[2] = new SurfaceRect(0,-90,-90, 25,1,10, -5,2,-4, 1,1,1, (char*)"cloth.bmp"); objects[2]->init();
-  objects[2]->set_texture_scale(2.5,1);
+  objects[2] = new CurvedRect(90,90,0, 30,1,10, -5,2,-4, 1,1,1, (char*)"cloth2.bmp"); objects[2]->init();
+  objects[2]->set_texture_scale(6,2);
   //right
-  objects[3] = new SurfaceRect(0,-90,90, 25,1,10, 15,2,-4, 1,1,1, (char*)"cloth.bmp"); objects[3]->init();
-  objects[3]->set_texture_scale(2.5,1);
+  objects[3] = new CurvedRect(90,-90,0, 30,1,10, 15,2,-4, 1,1,1, (char*)"cloth2.bmp"); objects[3]->init();
+  objects[3]->set_texture_scale(6,2);
   //ceiling
   objects[4] = new SurfaceRect(0,0,180, 20,1,25, 5,7,-4, 1,1,1, (char*)"darkwood.bmp"); objects[4]->init();
   objects[4]->set_texture_scale(10,12.5);
   //front wall (from start view)
-  objects[5] = new SurfaceRect(90,0,0, 20,1,10, 5,2,-16, 1,1,1, (char*)"cloth.bmp"); objects[5]->init();
-  objects[5]->set_texture_scale(2,1);
+  objects[5] = new CurvedRect(90,0,0, 25,1,10, 5,2,-16, 1,1,1, (char*)"cloth2.bmp"); objects[5]->init();
+  objects[5]->set_texture_scale(5,2);
   //back wall (from start view)
-  objects[6] = new SurfaceRect(90,180,0, 20,1,10, 5,2,8.5, 1,1,1, (char*)"cloth.bmp"); objects[6]->init();
-  objects[6]->set_texture_scale(2,1);
+  objects[6] = new CurvedRect(90,180,0, 25,1,10, 5,2,8.5, 1,1,1, (char*)"cloth2.bmp"); objects[6]->init();
+  objects[6]->set_texture_scale(5,2);
   //decorative objects
   objects[7] = new Cuboid(0,20,0, 2,2,2, -3.5,-2,-14, 1,1,1, (char*)"crate.bmp"); objects[7]->init();
   objects[8] = new Cuboid(0,30,0, 1,1,1, -3.5,-.5,-14, 1,1,1, (char*)"crate.bmp"); objects[8]->init();
@@ -298,13 +301,13 @@ void program_init()
   objects[11] = new Cuboid(0,45,0, 1.4,1.4,1.4,  -.7,-2.2,-.1, 1,1,1, (char*)"crate.bmp"); objects[11]->init();
   objects[12] = new Cuboid(0,10,0, 1.9,1.9,1.9,  -3,-2,-.1, 1,1,1, (char*)"crate.bmp"); objects[12]->init();
   objects[13] = new HayPile(0,0,0, 2,2,2, 3.5,-2,-14, 1,1,1, (char*)"hay.bmp"); objects[13]->init();
-  objects[14] = new Table(0,90,0, 3,3,3, 11,-2,-5); objects[14]->init();
+  objects[14] = new Table(0,90,0, 3,3,3, 12,-2,-5); objects[14]->init();
   objects[15] = new Lamp(0,0,0, 1.5,1.5,1.5, 5,7,-3, 1,1,1); objects[15]->init();
-  objects[16] = new Sphere(90,45,20, 1,1,1, 10.8,0,-3, 1,1,1, (char*)"basketball.bmp"); objects[16]->init();
-  objects[17] = new TeddyBear(-13,-70,0, 3,3,3, 11,.6,-4.5, 1,1,1, (char*)"bulb.bmp"); objects[17]->init();
-  objects[18] = new HayPile(0,0,0, 3,1,3, 10,-2.5,5, 1,1,1, (char*)"hay.bmp");
-  objects[19] = new HayPile(0,0,0, 3,2,3, 13,-2,6, 1,1,1, (char*)"hay.bmp");
-  objects[20] = new HayPile(0,0,0, 3,1.5,3, 14,-2.85,4, 1,1,1, (char*)"hay.bmp");
+  objects[16] = new Sphere(90,45,20, 1,1,1, 11.8,0,-3, 1,1,1, (char*)"basketball.bmp"); objects[16]->init();
+  objects[17] = new TeddyBear(-13,-70,0, 3,3,3, 12,.6,-4.5, 1,1,1, (char*)"bulb.bmp"); objects[17]->init();
+  objects[18] = new HayPile(0,180,0, 3,1.5,3, 14,-2.5,5, 1,1,1, (char*)"hay.bmp"); objects[18]->init();
+  objects[19] = new HayPile(0,180,0, 3,2,3, 15,-2,7.5, 1,1,1, (char*)"hay.bmp"); objects[19]->init();
+  objects[20] = new HayPile(0,0,0, 4,.8,4, -4,-2.75,-7, 1,1,1, (char*)"hay.bmp"); objects[20]->init();
 }
 
 //game logic: shoot

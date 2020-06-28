@@ -24,11 +24,26 @@ void main()
   float d = length(Light);
   float At = clamp(10.0/d, 0.0, 1.0);
 
+  //toonify
+  float intensity = dot(normalize(N),normalize(L));
+  float f;
+  if (intensity > 0.95)
+     f= 0.8;
+  else if (intensity > 0.5)
+     f = 0.6;
+  else if (intensity > 0.25)
+     f = 0.4;
+  else
+     f = 0.2;
+
+  //uncommenting this disables toon lighting. working on textures that fit toon lighting better.
+  f = 1.0*At;
+
   //  Sum color types
-  vec4 color =  gl_FrontMaterial.emission * At
-              + gl_FrontLightProduct[0].ambient * At
-              + Id*gl_FrontLightProduct[0].diffuse * At
-              + Is*gl_FrontLightProduct[0].specular * At;
+  vec4 color =  gl_FrontMaterial.emission * f
+              + gl_FrontLightProduct[0].ambient * f
+              + Id*gl_FrontLightProduct[0].diffuse * f
+              + Is*gl_FrontLightProduct[0].specular * f;
 
   //  Apply texture
   gl_FragColor = color * texture2D(tex,gl_TexCoord[0].xy);

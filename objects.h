@@ -64,7 +64,7 @@ public:
   void set_position(float _pos[3]) { pos[0] = _pos[0]; pos[1] = _pos[1]; pos[2] = _pos[2]; };
   void set_color(float _col[3]) { col[0] = _col[0]; col[1] = _col[1]; col[2] = _col[2]; }
   void set_texture(GLuint tex) { texture = tex; init(); };
-  void set_texture_scale(float x, float y) { tex_sca_x = x; tex_sca_y = y; };
+  void set_texture_scale(float x, float y) { tex_sca_x = x; tex_sca_y = y; init(); };
   //apply transformations
   int apply_transform();
   //virtual functions for inheritance. will print out a message if not implemented.
@@ -107,6 +107,25 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+  GLuint draw_list;
+public:
+  void init();
+  void draw();
+};
+
+/*
+ * Curved rectangle
+ * Orientation matches SurfaceRect, curve starts in z direction
+ * and curves towards -y
+*/
+class CurvedRect : public TObject
+{
+  using TObject::TObject;
+private:
+  float shine_value = 1;
+  float spec_color[4] = {1,1,1,1};
+  float em_color[4]   = {0,0,0,1};
+  GLuint draw_list;
 public:
   void init();
   void draw();
@@ -171,6 +190,7 @@ private:
   float em_color[4]   = {0,0,0,1};
   Circle bottom = Circle(180,0,0, .536,1,.536, 0,-.64,0, 1,1,1);
   Circle top = Circle(0,0,0, .536,1,.536, 0,.64,0, 1,1,1);
+  GLuint draw_list;
 public:
   void init();
   void draw();
@@ -270,6 +290,7 @@ private:
   float shine_value = 1;
   float spec_color[4] = {1,1,1,1};
   float em_color[4]   = {0,0,0,1};
+  GLuint draw_list;
 public:
   void init();
   void draw();
