@@ -788,7 +788,6 @@ void Lamp::init()
   pole.init();
   lamp.init();
   bulb.init();
-  pivot.init();
 }
 void Lamp::draw()
 {
@@ -797,7 +796,6 @@ void Lamp::draw()
   pole.draw();
   lamp.draw();
   bulb.draw();
-  pivot.draw();
   glPopMatrix();
 }
 

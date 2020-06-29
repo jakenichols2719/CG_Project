@@ -1,9 +1,7 @@
 #include "objects.h"
 #include "shaderfunc.h"
-#include "partsys.h"
 
 TObject* objects[25];
-PartSys partSys;
 //viewing variables
 float th = 0;
 float ph = 0;
@@ -123,15 +121,7 @@ void idle()
     //process_mouse(delta);
     if(rotate_light){
       zh += 90.0*delta;
-      if(zh >= 360) {
-        //rust particles
-        partSys.newParticle(5,7,-3, -.1,-.4,.1, .50,.26,.13, 5,2);
-        partSys.newParticle(5,7,-3, -.15,-.3,0, .50,.26,.13, 4,1.7);
-        partSys.newParticle(5,7,-3, .12,-.5,.1, .50,.26,.13, 6,1.1);
-        partSys.newParticle(5,7,-3, .1,-.4,-.2, .50,.26,.13, 4,2.2);
-        //reset to 0
-        zh = 0;
-      }
+      zh %= 360;
       //move lamp;
       float lamp_rot[3] = {10,(float)zh,0};
       objects[15]->set_rotation(lamp_rot);
@@ -163,7 +153,6 @@ void display()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  glEnable(GL_LIGHTING);
   transform_camera();
   glPushMatrix();
   runLighting();
@@ -172,8 +161,6 @@ void display()
     objects[n]->draw();
   }
   glUseProgram(0);
-  glDisable(GL_LIGHTING);
-  partSys.process(.017);
   glPopMatrix();
   glutSwapBuffers();
 }
@@ -341,7 +328,6 @@ void fire()
   //std::cout << x_pos << " " << y_pos << std::endl;
   if(x_pos != -1 && y_pos != -1) {
     objects[0]->toggle_light_off_at(x_pos, y_pos);
-    partSys.ef_boom(x,y,-10);
   }
   if(objects[0]->lit_target_count() == 0) {
     light_four();

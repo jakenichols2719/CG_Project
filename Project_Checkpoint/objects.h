@@ -318,7 +318,6 @@ private:
   Cuboid pole = Cuboid(0,0,0, .1,5.5,.1, 0,.25,0, 1,1,1, (char*)"metal.bmp");
   Cone lamp = Cone(0,0,0, .5,.5,.5, 0,-2.5,0, 1,1,1, (char*)"metal.bmp");
   Sphere bulb = Sphere(0,0,0, .3,.3,.3, 0,-2.75,0, 1,1,1, (char*)"bulb.bmp");
-  Sphere pivot = Sphere(0,0,0, .4,.4,.4, 0,0,0, 1,1,1, (char*)"metal.bmp");
 public:
   void init();
   void draw();
