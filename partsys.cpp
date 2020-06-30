@@ -13,13 +13,14 @@ Particle::Particle()
 Particle::Particle(float _x, float _y, float _z,
                    float _dx, float _dy, float _dz,
                    float _r, float _g, float _b,
-                   float _size,float _at)
+                   float _size,float _at, GLubyte* _map)
 {
   x = _x; y = _y; z = _z;
   dx = _dx; dy = _dy; dz = _dz;
   r = _r; g = _g; b = _b;
   active_time = _at;
   size = _size;
+  map = _map;
 }
 
 /*
@@ -31,17 +32,30 @@ bool Particle::process(float delta)
   x += dx * delta;
   y += dy * delta;
   z += dz * delta;
-  glPointSize(size);
   glColor3f(r,g,b);
+  /* SCREW THIS. BITMAP HOURS.
+  glPointSize(size);
   glBegin(GL_POINTS);
   //std::cout << x << " " << y << " " << z << std::endl;
   glVertex3f(x,y,z);
   glEnd();
+  */
+  glRasterPos3f(x,y,z);
+  glBitmap(8,8, 0,0, 0,0, map);
   active_time -= delta;
   if(active_time <= 0){
     return false;
   }
   return true;
+}
+
+
+/*
+ * Initializes bitmaps into array
+*/
+void PartSys::initMaps() {
+  maps[0] = new GLubyte[8] {0x48,0xd5,0x4a,0xdb,0xba,0xa9,0x4a,0x64}; //flake
+  maps[1] = new GLubyte[8] {0x3c,0x7e,0xff,0xff,0xff,0xff,0x7e,0x3c};
 }
 
 /*
@@ -50,9 +64,9 @@ bool Particle::process(float delta)
 void PartSys::newParticle(float _x, float _y, float _z,
                           float _dx, float _dy, float _dz,
                           float _r, float _g, float _b,
-                          float size, float _at)
+                          float size, float _at, Map bmp)
 {
-  active_parts[next_index] = new Particle(_x,_y,_z, _dx,_dy,_dz, _r,_g,_b, size,_at);
+  active_parts[next_index] = new Particle(_x,_y,_z, _dx,_dy,_dz, _r,_g,_b, size,_at, maps[bmp]);
   next_index++;
   next_index %= 80;
 }
@@ -72,7 +86,8 @@ void PartSys::process(float delta)
 
 static float rand_dir() {
   int sign = (rand()%3)-1;
-  float dir = (float)((rand()%600)*sign)/100.0;
+  float udir = (float)(rand()%200)+101.0;
+  float dir = (udir*sign)/100.0;
   return dir;
 }
 
@@ -84,12 +99,12 @@ static float rand_col() {
   return col;
 }
 
-void PartSys::ef_boom(float _x, float _y, float _z) {
-  for(int n=0; n<20; n++) {
+void PartSys::ef_confet(float _x, float _y, float _z) {
+  for(int n=0; n<10; n++) {
     float dx = rand_dir();
     float dy = rand_dir();
-    float dz = rand_dir();
+    float dz = rand_dir()/5;
     float at = (float)(rand()%50)/100.0;
-    newParticle(_x, _y, _z, dx,dy,dz, rand_col(),rand_col(),rand_col(), (rand()%5)+3,at);
+    newParticle(_x, _y, _z, dx,dy,dz, rand_col(),rand_col(),rand_col(), (rand()%5)+3,at, MAP_CONFET);
   }
 }

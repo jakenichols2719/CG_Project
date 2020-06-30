@@ -125,10 +125,10 @@ void idle()
       zh += 90.0*delta;
       if(zh >= 360) {
         //rust particles
-        partSys.newParticle(5,7,-3, -.1,-.4,.1, .50,.26,.13, 5,2);
-        partSys.newParticle(5,7,-3, -.15,-.3,0, .50,.26,.13, 4,1.7);
-        partSys.newParticle(5,7,-3, .12,-.5,.1, .50,.26,.13, 6,1.1);
-        partSys.newParticle(5,7,-3, .1,-.4,-.2, .50,.26,.13, 4,2.2);
+        partSys.newParticle(5,7,-3, -.1,-.4,.1, .50,.26,.13, 5,2, MAP_FLAKE);
+        partSys.newParticle(5,7,-3, -.15,-.3,0, .50,.26,.13, 4,1.7, MAP_FLAKE);
+        partSys.newParticle(5,7,-3, .12,-.5,.1, .50,.26,.13, 6,1.1, MAP_FLAKE);
+        partSys.newParticle(5,7,-3, .1,-.4,-.2, .50,.26,.13, 4,2.2, MAP_FLAKE);
         //reset to 0
         zh = 0;
       }
@@ -321,6 +321,11 @@ void program_init()
   objects[18] = new HayPile(0,180,0, 3,1.5,3, 14,-2.5,5, 1,1,1, (char*)"hay.bmp"); objects[18]->init();
   objects[19] = new HayPile(0,180,0, 3,2,3, 15,-2,7.5, 1,1,1, (char*)"hay.bmp"); objects[19]->init();
   objects[20] = new HayPile(0,0,0, 4,.8,4, -4,-2.75,-7, 1,1,1, (char*)"hay.bmp"); objects[20]->init();
+
+  //pixel store for bitmap particles
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  //initialize maps in partsys
+  partSys.initMaps();
 }
 
 //game logic: shoot
@@ -341,7 +346,7 @@ void fire()
   //std::cout << x_pos << " " << y_pos << std::endl;
   if(x_pos != -1 && y_pos != -1) {
     objects[0]->toggle_light_off_at(x_pos, y_pos);
-    partSys.ef_boom(x,y,-10);
+    partSys.ef_confet(x,y,-9.5);
   }
   if(objects[0]->lit_target_count() == 0) {
     light_four();
@@ -350,6 +355,8 @@ void fire()
 //game logic: light random
 void light_four()
 {
+  partSys.ef_confet(-3,5,-9.5);
+  partSys.ef_confet(3,5,-9.5);
   bool unique = false;
   int picked_indices[4];
   int x;
