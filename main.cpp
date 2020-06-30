@@ -39,6 +39,8 @@ void fire();
 void light_four();
 bool running = true;
 
+//previous delta value. needed for partSys in display
+float prev_delta;
 //returns delta, locking to FPS when able.
 static float delta_()
 {
@@ -119,6 +121,7 @@ void idle()
 {
   float delta = delta_();
   if(delta) {
+    prev_delta = delta;
     process_keys(delta);
     //process_mouse(delta);
     if(rotate_light){
@@ -173,7 +176,7 @@ void display()
   }
   glUseProgram(0);
   glDisable(GL_LIGHTING);
-  partSys.process(.017);
+  partSys.process(prev_delta);
   glPopMatrix();
   glutSwapBuffers();
 }

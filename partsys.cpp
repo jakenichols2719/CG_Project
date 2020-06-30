@@ -32,16 +32,11 @@ bool Particle::process(float delta)
   x += dx * delta;
   y += dy * delta;
   z += dz * delta;
+  glPushMatrix();
   glColor3f(r,g,b);
-  /* SCREW THIS. BITMAP HOURS.
-  glPointSize(size);
-  glBegin(GL_POINTS);
-  //std::cout << x << " " << y << " " << z << std::endl;
-  glVertex3f(x,y,z);
-  glEnd();
-  */
   glRasterPos3f(x,y,z);
   glBitmap(8,8, 0,0, 0,0, map);
+  glPopMatrix();
   active_time -= delta;
   if(active_time <= 0){
     return false;
@@ -84,12 +79,14 @@ void PartSys::process(float delta)
   }
 }
 
+/*
 static float rand_dir() {
   int sign = (rand()%3)-1;
   float udir = (float)(rand()%200)+101.0;
   float dir = (udir*sign)/100.0;
   return dir;
 }
+*/
 
 static float rand_col() {
   //float col = (float)((rand()%50)+26)/100.0;
@@ -100,11 +97,12 @@ static float rand_col() {
 }
 
 void PartSys::ef_confet(float _x, float _y, float _z) {
-  for(int n=0; n<10; n++) {
-    float dx = rand_dir();
-    float dy = rand_dir();
-    float dz = rand_dir()/5;
-    float at = (float)(rand()%50)/100.0;
-    newParticle(_x, _y, _z, dx,dy,dz, rand_col(),rand_col(),rand_col(), (rand()%5)+3,at, MAP_CONFET);
+  float r=rand_col(), g=rand_col(), b=rand_col();
+  for(int th = 0; th<360; th+=45) {
+    float dx = Cos(th)*3;
+    float dy = Sin(th)*3;
+    float dz = 0; //in case I want to make an angle thing later
+    float at = .5;
+    newParticle(_x,_y,_z, dx,dy,dz, r,g,b, 5,at,MAP_CONFET);
   }
 }

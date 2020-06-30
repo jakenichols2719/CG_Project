@@ -381,12 +381,13 @@ void Cone::init()
   glEnable(GL_TEXTURE_2D);
   glBegin(GL_QUADS);
   for(int th = 0; th < 360; th+=10) {
-    float t0 = th/180;
-    float t1 = (th+10)/180;
+    int texth = th%90;
+    float t0 = (float)(texth+5)/90;
+    float t1 = (float)(texth-5)/90;
     glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(0,1); glVertex3f(0,.5,0);
     glNormal3f(-Sin(th+5),1,Cos(th+5)); glTexCoord2f(t0,0); glVertex3f(-Sin(th+5),-.5,Cos(th+5));
     glNormal3f(-Sin(th-5),1,Cos(th-5)); glTexCoord2f(t1,0); glVertex3f(-Sin(th-5),-.5,Cos(th-5));
-    glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(1,1); glVertex3f(0,.5,0);
+    glNormal3f(-Sin(th),1,Cos(th)); glTexCoord2f(t1,1); glVertex3f(0,.5,0);
   }
   glEnd();
   glDisable(GL_TEXTURE_2D);
@@ -765,11 +766,11 @@ void HayPile::draw()
 //===TABLE===
 void Table::init()
 {
-  legs[0] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp"); legs[0].init();
-  legs[1] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp"); legs[1].init();
-  legs[2] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp"); legs[2].init();
-  legs[3] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp"); legs[3].init();
-  top =     Cuboid(0,0,0, 2,.2,1,   0.0,.4,0.0,  1,1,1, (char*)"medwood.bmp"); top.init();
+  legs[0] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp"); legs[0].set_texture_scale(2,2); legs[0].init();
+  legs[1] = Cuboid(0,0,0, .1,.8,.1, -.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp"); legs[1].set_texture_scale(2,2); legs[1].init();
+  legs[2] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,+.4, 1,1,1, (char*)"medwood.bmp"); legs[2].set_texture_scale(2,2); legs[2].init();
+  legs[3] = Cuboid(0,0,0, .1,.8,.1, +.9,-.1,-.4, 1,1,1, (char*)"medwood.bmp"); legs[3].set_texture_scale(2,2); legs[3].init();
+  top =     Cuboid(0,0,0, 2,.2,1,   0.0,.4,0.0,  1,1,1, (char*)"medwood.bmp"); top.set_texture_scale(3,3);     top.init();
 }
 void Table::draw()
 {
