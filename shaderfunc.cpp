@@ -48,6 +48,11 @@ int MakeShader(GLenum type, char* file)
   return shader;
 }
 
+//indices for particle shader arrays
+#define VELOCITY_ARRAY 3
+#define END_ARRAY 4
+#define START_ARRAY 5
+
 /*
  * Creates a shader program with given vertex and fragment shaders
 */
@@ -56,11 +61,17 @@ int MakeShaderProg(char* vertexFile, char* fragmentFile)
   //initialize program
   int program = glCreateProgram();
   //initialize and compile both shaders
-  int vert = MakeShader(GL_VERTEX_SHADER, vertexFile);
-  int frag = MakeShader(GL_FRAGMENT_SHADER, fragmentFile);
+  int vert;
+  int frag;
+  if(vertexFile) vert = MakeShader(GL_VERTEX_SHADER, vertexFile);
+  if(fragmentFile) frag = MakeShader(GL_FRAGMENT_SHADER, fragmentFile);
   //attach shaders to program
-  glAttachShader(program,vert);
-  glAttachShader(program,frag);
+  if(vertexFile) glAttachShader(program,vert);
+  if(fragmentFile) glAttachShader(program,frag);
+  //set attribute locations
+  glBindAttribLocation(program,VELOCITY_ARRAY,"Vel");
+  glBindAttribLocation(program,END_ARRAY,"End");
+  glBindAttribLocation(program,START_ARRAY,"Start");
   //link program
   glLinkProgram(program);
   //return shader program

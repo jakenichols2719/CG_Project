@@ -46,3 +46,27 @@ public:
   //and some predefined particle effects
   void ef_confet(float _x, float _y, float _z);
 };
+
+class ShaderPartSys
+{
+private:
+  int shader;
+  static const int N = 20; //particle count, setting this high crashes so maybe don't
+  static const int size = 7; //particle size
+  //particle data
+  float Vert[3*N*N];
+  float Col[3*N*N];
+  float Vel[3*N*N];
+  float Start[N*N];
+  float End[N*N];
+  //current index to put a particle to
+  int cur_index = 0;
+public:
+  void newParticle(float x, float y, float z,
+                   float dx, float dy, float dz,
+                   float r, float g, float b,
+                   float at);
+  void process();
+  void ef_confet(float x, float y, float z);
+  void ef_celebrate(float x, float y, float z);
+};

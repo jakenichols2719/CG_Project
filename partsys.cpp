@@ -79,14 +79,13 @@ void PartSys::process(float delta)
   }
 }
 
-/*
-static float rand_dir() {
-  int sign = (rand()%3)-1;
-  float udir = (float)(rand()%200)+101.0;
-  float dir = (udir*sign)/100.0;
-  return dir;
+static float randf(float min, float max) {
+  int mini = (int)(min*100);
+  int maxi = (int)(max*100);
+  int interval = maxi-mini+1;
+  float result = ((float)(rand()%interval)+mini)/100.0;
+  return result;
 }
-*/
 
 static float rand_col() {
   //float col = (float)((rand()%50)+26)/100.0;
@@ -104,5 +103,97 @@ void PartSys::ef_confet(float _x, float _y, float _z) {
     float dz = 0; //in case I want to make an angle thing later
     float at = .5;
     newParticle(_x,_y,_z, dx,dy,dz, r,g,b, 5,at,MAP_CONFET);
+  }
+}
+
+
+//===EXPERIMENTAL SHADER PARTICLES===
+/*
+ * Create a new particle.
+ * x, y, z: position
+ * vx,vy,vz: velocity
+ * r, g, b: color
+ * size: particle size
+ * at: active time
+*/
+void ShaderPartSys::newParticle(float x, float y, float z,
+                                float vx, float vy, float vz,
+                                float r, float g, float b,
+                                float at)
+{
+  //index for triad arrays
+  int tri_index = cur_index*3;
+  //position
+  Vert[tri_index] = x;
+  Vert[tri_index+1] = y;
+  Vert[tri_index+2] = z;
+  //velocity
+  Vel[tri_index] = vx;
+  Vel[tri_index+1] = vy;
+  Vel[tri_index+2] = vz;
+  //color
+  Col[tri_index] = r;
+  Col[tri_index+1] = g;
+  Col[tri_index+2] = b;
+  //end time
+  End[cur_index] = (glutGet(GLUT_ELAPSED_TIME)/1000.0) + at;
+  Start[cur_index] = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+  //add 1 to current index;
+  cur_index++;
+  //restrain to max particles
+  cur_index %= N*N;
+}
+
+//indices for arrays
+#define VELOCITY_ARRAY 3
+#define END_ARRAY 4
+#define START_ARRAY 5
+
+void ShaderPartSys::process()
+{
+
+  glPointSize(size);
+  // vertex pointer
+  glVertexPointer(3,GL_FLOAT,0,Vert);
+  // color pointer
+  glColorPointer(3,GL_FLOAT,0,Col);
+  // vertex attributes
+  glVertexAttribPointer(VELOCITY_ARRAY,3,GL_FLOAT,GL_FALSE,0,Vel);
+  glVertexAttribPointer(END_ARRAY,1,GL_FLOAT,GL_FALSE,0,End);
+  glVertexAttribPointer(START_ARRAY,1,GL_FLOAT,GL_FALSE,0,Start);
+  // enable arrays
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glEnableVertexAttribArray(VELOCITY_ARRAY);
+  glEnableVertexAttribArray(END_ARRAY);
+  glEnableVertexAttribArray(START_ARRAY);
+
+  //draw (please god work just make the particles)
+  glDrawArrays(GL_POINTS,0,N*N);
+
+  //disable all those things
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableVertexAttribArray(VELOCITY_ARRAY);
+  glDisableVertexAttribArray(END_ARRAY);
+}
+
+void ShaderPartSys::ef_confet(float _x, float _y, float _z) {
+  float r=rand_col(), g=rand_col(), b=rand_col();
+  for(int th = 0; th<360; th+=45) {
+    float dx = Cos(th)*3;
+    float dy = Sin(th)*3 + 3;
+    float dz = 0; //in case I want to make an angle thing later
+    float at = .4;
+    newParticle(_x,_y,_z, dx,dy,dz, r,g,b, at);
+  }
+}
+
+void ShaderPartSys::ef_celebrate(float x, float y, float z) {
+  float r = 1.00, g = .86, b = .50;
+  for(int n=0; n<20; n++) {
+    float vx=randf(-1,1), vy=randf(8,9), vz=randf(-.5,.5);
+    float at=randf(.8,1);
+    newParticle(x,y,z, vx,vy,vz, r,g,b, at);
   }
 }

@@ -3,7 +3,8 @@
 #include "partsys.h"
 
 TObject* objects[25];
-PartSys partSys;
+//PartSys partSys;
+ShaderPartSys partSys;
 //viewing variables
 float th = 0;
 float ph = 0;
@@ -20,6 +21,11 @@ int zh        =  90;  // Used to rotate lamp/center light
 
 //shader
 int shader = 0;
+int part_shader = 0;
+//indices for particle shader arrays
+#define VELOCITY_ARRAY 3
+#define END_ARRAY 4
+#define START_ARRAY 5
 
 //timing variables
 float lastTime;
@@ -33,6 +39,7 @@ bool rotate_light = true;
 
 //game logic variables
 float grace = .275; //grace area for target detection
+int celebrations = 0; //celebratory count, for fun
 
 //game logic forward declarations
 void fire();
@@ -127,11 +134,10 @@ void idle()
     if(rotate_light){
       zh += 90.0*delta;
       if(zh >= 360) {
-        //rust particles
-        partSys.newParticle(5,7,-3, -.1,-.4,.1, .50,.26,.13, 5,2, MAP_FLAKE);
-        partSys.newParticle(5,7,-3, -.15,-.3,0, .50,.26,.13, 4,1.7, MAP_FLAKE);
-        partSys.newParticle(5,7,-3, .12,-.5,.1, .50,.26,.13, 6,1.1, MAP_FLAKE);
-        partSys.newParticle(5,7,-3, .1,-.4,-.2, .50,.26,.13, 4,2.2, MAP_FLAKE);
+        partSys.newParticle(5,7,-3, -.1,0.5,.1, .50,.26,.13, 1.5);
+        partSys.newParticle(5,7,-3, -.15,0.5,0, .50,.26,.13, 1.3);
+        partSys.newParticle(5,7,-3, .12,0.5,.1, .50,.26,.13, 1.6);
+        partSys.newParticle(5,7,-3, .1,0.5,-.2, .50,.26,.13, 1.4);
         //reset to 0
         zh = 0;
       }
@@ -142,6 +148,11 @@ void idle()
     if(!running) {
       exit(0);
     }
+    if(celebrations>0 && celebrations%10 == 0) {
+      partSys.ef_celebrate(-3,5,-9.5);
+      partSys.ef_celebrate(3,5,-9.5);
+    }
+    celebrations--;
   }
    glutPostRedisplay();
 }
@@ -166,17 +177,27 @@ void display()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
-  glEnable(GL_LIGHTING);
   transform_camera();
+  glEnable(GL_LIGHTING);
   glPushMatrix();
   runLighting();
+  //enable object shader
   glUseProgram(shader);
   for(int n=0; n<21; n++) {
     objects[n]->draw();
   }
-  glUseProgram(0);
+  //disable lighting for particles
   glDisable(GL_LIGHTING);
-  partSys.process(prev_delta);
+  //enable particle shader
+  glUseProgram(part_shader);
+  //bind uniform time
+  float time = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+  //std::cout << "Time: " << time << std::endl;
+  int id = glGetUniformLocation(part_shader, "time");
+  glUniform1f(id,time);
+  partSys.process();
+  glUseProgram(0);
+  //partSys.process(prev_delta);
   glPopMatrix();
   glutSwapBuffers();
 }
@@ -287,6 +308,12 @@ void program_init()
   srand(time(NULL));
   //get shader
   shader = MakeShaderProg((char*)"carnival.vert",(char*)"carnival.frag");
+  part_shader = MakeShaderProg((char*)"particle.vert",NULL);
+  /*
+  glBindAttribLocation(part_shader,VELOCITY_ARRAY,"Vel");
+  glBindAttribLocation(part_shader,END_ARRAY,"End");
+  glBindAttribLocation(part_shader,START_ARRAY,"Start");
+  */
   //initialize scene objects
   //targetrack
   objects[0] = new TargetRack(0,0,0, 1,1,1, 0,0,-10); objects[0]->init();
@@ -326,9 +353,13 @@ void program_init()
   objects[20] = new HayPile(0,0,0, 4,.8,4, -4,-2.75,-7, 1,1,1, (char*)"hay.bmp"); objects[20]->init();
 
   //pixel store for bitmap particles
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   //initialize maps in partsys
-  partSys.initMaps();
+  //partSys.initMaps();
+
+  //test particle
+  //testPartSys.newParticle(0,0,0, 0,1,0, 1,1,1, 3.0);
+  //testPartSys.newParticle(0,0,0, 1,0,0, 1,1,1, 3.0);
 }
 
 //game logic: shoot
@@ -352,14 +383,13 @@ void fire()
     partSys.ef_confet(x,y,-9.5);
   }
   if(objects[0]->lit_target_count() == 0) {
+    celebrations = 60;
     light_four();
   }
 }
 //game logic: light random
 void light_four()
 {
-  partSys.ef_confet(-3,5,-9.5);
-  partSys.ef_confet(3,5,-9.5);
   bool unique = false;
   int picked_indices[4];
   int x;
