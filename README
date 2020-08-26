@@ -19,3 +19,5 @@ The rest of the textures are made by me.
 
 As of Sun. June 28, I have spent 35-40 hrs (outside of preexisting code from hw3)
 on this assignment.
+
+There are some issues that are hardware-dependent with the particle system that I am unsure of how to fix, but all other aspects work as intended.
